@@ -13,6 +13,8 @@ It includes three nested benchmark subsets, two evaluation protocols, and eight 
 
 **Dataset:** [Harvard Dataverse](https://doi.org/10.7910/DVN/8IEH6Q)
 
+![ThousandWorlds dataset schematic](imgs/OVERVIEW.png)
+
 ## Quickstart
 
 ```bash
@@ -33,19 +35,6 @@ scores["per_variable"]
 
 See [`notebooks/quickstart.ipynb`](notebooks/quickstart.ipynb) for a short
 walkthrough.
-
-![ThousandWorlds dataset schematic](imgs/OVERVIEW.png)
-
-## Running Baselines
-
-```bash
-python -m thousandworlds.run_model train_mean single-complete
-python -m thousandworlds.run_model --config results/models/multi-partial/pca_mlp/config.json
-```
-
-Runs write predictions, metrics, and the resolved config under
-`results/models/<subset>/<method>/`. Full GPLFR reruns require accelerator
-hardware; released predictions and metrics are the reference artifacts.
 
 ## Installation
 
@@ -70,6 +59,17 @@ Published baseline prediction results are distributed as separate Dataverse arch
 ```bash
 python -c "import thousandworlds as tw; tw.download_baselines('.')"
 ```
+
+## Running Baselines
+
+```bash
+python -m thousandworlds.run_model train_mean single-complete
+python -m thousandworlds.run_model --config results/models/multi-partial/pca_mlp/config.json
+```
+
+Runs write predictions, metrics, and the resolved config under
+`results/models/<subset>/<method>/`. Full GPLFR reruns require accelerator
+hardware; released predictions and metrics are the reference artifacts.
 
 ## Repo Structure
 
