@@ -13,6 +13,8 @@ It includes three nested benchmark subsets, two evaluation protocols, and eight 
 
 **Dataset:** [Harvard Dataverse](https://doi.org/10.7910/DVN/8IEH6Q)
 
+<br>
+
 ![ThousandWorlds dataset schematic](imgs/OVERVIEW.png)
 
 ## Quickstart
