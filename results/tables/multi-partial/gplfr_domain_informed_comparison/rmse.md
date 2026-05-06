@@ -1,0 +1,10 @@
+| variable | gplfr | gplfr_field_coreg | gplfr_field_coreg_learn_weights |
+| --- | --- | --- | --- |
+| surface_temperature | 10.4972 | 10.5956 | 10.4169 |
+| temperature | 8.68153 | 8.73371 | 8.58141 |
+| specific_humidity_dex | 0.459389 | 0.460789 | 0.451518 |
+| cloud_fraction | 0.0484222 | 0.0475401 | 0.0497582 |
+| u | 9.89456 | 9.92589 | 10.0142 |
+| v | 4.27651 | 4.29733 | 4.38575 |
+| asr | 25.5703 | 24.8314 | 25.3772 |
+| olr | 17.6072 | 16.8971 | 17.4665 |

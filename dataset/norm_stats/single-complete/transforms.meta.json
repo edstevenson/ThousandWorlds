@@ -1,0 +1,165 @@
+{
+  "asr_olr_normalize_by_f_star": true,
+  "fields": [
+    "surface_temperature",
+    "temperature_0",
+    "temperature_1",
+    "temperature_2",
+    "temperature_3",
+    "temperature_4",
+    "temperature_5",
+    "temperature_6",
+    "temperature_7",
+    "temperature_8",
+    "specific_humidity_0",
+    "specific_humidity_1",
+    "specific_humidity_2",
+    "specific_humidity_3",
+    "specific_humidity_4",
+    "specific_humidity_5",
+    "specific_humidity_6",
+    "specific_humidity_7",
+    "specific_humidity_8",
+    "asr_cloudy",
+    "olr_cloudy",
+    "cloud_fraction_0",
+    "cloud_fraction_1",
+    "cloud_fraction_2",
+    "cloud_fraction_3",
+    "cloud_fraction_4",
+    "cloud_fraction_5",
+    "cloud_fraction_6",
+    "cloud_fraction_7",
+    "cloud_fraction_8",
+    "u_0",
+    "u_1",
+    "u_2",
+    "u_3",
+    "u_4",
+    "u_5",
+    "u_6",
+    "u_7",
+    "u_8",
+    "v_0",
+    "v_1",
+    "v_2",
+    "v_3",
+    "v_4",
+    "v_5",
+    "v_6",
+    "v_7",
+    "v_8"
+  ],
+  "inputs": [
+    "T_star",
+    "F_star",
+    "radius",
+    "gravity",
+    "P_rot",
+    "P0",
+    "CO2",
+    "CH4"
+  ],
+  "per_level": true,
+  "strategies": {
+    "CH4": [
+      "arcsinh_Z-scaling",
+      {
+        "s": 1e-08,
+        "stat_key_pattern": "CH4"
+      }
+    ],
+    "CO2": [
+      "arcsinh_Z-scaling",
+      {
+        "s": 1e-06,
+        "stat_key_pattern": "CO2"
+      }
+    ],
+    "F_star": [
+      "Z-scaling",
+      {
+        "stat_key_pattern": "F_star"
+      }
+    ],
+    "P0": [
+      "log_Z-scaling",
+      {
+        "stat_key_pattern": "P0"
+      }
+    ],
+    "P_rot": [
+      "log_Z-scaling",
+      {
+        "stat_key_pattern": "P_rot"
+      }
+    ],
+    "T_star": [
+      "Z-scaling",
+      {
+        "stat_key_pattern": "T_star"
+      }
+    ],
+    "asr_cloudy": [
+      "Z-scaling",
+      {
+        "stat_key_pattern": "asr_cloudy"
+      }
+    ],
+    "cloud_fraction": [
+      "smoothed_logit_Z-scaling",
+      {
+        "epsilon": 0.002,
+        "stat_key_pattern": "smoothed_logit_cloud_fraction"
+      }
+    ],
+    "gravity": [
+      "Z-scaling",
+      {
+        "stat_key_pattern": "gravity"
+      }
+    ],
+    "olr_cloudy": [
+      "Z-scaling",
+      {
+        "stat_key_pattern": "olr_cloudy"
+      }
+    ],
+    "radius": [
+      "Z-scaling",
+      {
+        "stat_key_pattern": "radius"
+      }
+    ],
+    "specific_humidity": [
+      "log_Z-scaling",
+      {
+        "stat_key_pattern": "log_specific_humidity"
+      }
+    ],
+    "surface_temperature": [
+      "Z-scaling",
+      {
+        "stat_key_pattern": "surface_temperature"
+      }
+    ],
+    "temperature": [
+      "Z-scaling",
+      {
+        "stat_key_pattern": "temperature"
+      }
+    ],
+    "u": [
+      "Z-scaling",
+      {
+        "stat_key_pattern": "u"
+      }
+    ],
+    "v": [
+      "Z-scaling",
+      {
+        "stat_key_pattern": "v"
+      }
+    ]
+  }
+}

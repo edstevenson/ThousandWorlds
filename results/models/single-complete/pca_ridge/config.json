@@ -1,0 +1,85 @@
+{
+  "method": "pca_ridge",
+  "subset": "single-complete",
+  "data_dir": "dataset",
+  "out_dir": "results/models/single-complete/pca_ridge",
+  "seed": 0,
+  "dtype": "float64",
+  "device": "auto",
+  "pca_ridge": {
+    "latent_dim": 20,
+    "lambda_reg": 1.0,
+    "ppca_iters": 50,
+    "design": {
+      "intercept": true,
+      "inputs": true,
+      "sim_onehot": true
+    },
+    "linear_trend_cfg": {
+      "enabled": true,
+      "lambda": 0.001,
+      "design": {
+        "intercept": true,
+        "inputs": true,
+        "sim_onehot": false
+      }
+    }
+  },
+  "CV_sweep": {
+    "n_folds": 3,
+    "latent_dim": [
+      20,
+      50,
+      100,
+      150
+    ],
+    "lambda_reg": [
+      1e-06,
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "objective": "equal_group_normalized_rmse",
+    "scores": [
+      [
+        0.6288785201807817,
+        0.6288785102466742,
+        0.6288785003125668,
+        0.62887845809261,
+        0.6288781724870205,
+        0.6288777726391951
+      ],
+      [
+        0.6288787412146727,
+        0.6288787399729093,
+        0.6288787312805653,
+        0.6288786555329958,
+        0.6288783016304175,
+        0.6288778148591518
+      ],
+      [
+        0.6288788442810377,
+        0.6288788442810377,
+        0.6288788368304571,
+        0.6288787797093391,
+        0.6288783848285675,
+        0.6288778421779474
+      ],
+      [
+        0.6288788566986719,
+        0.6288788566986719,
+        0.6288788542151451,
+        0.6288787772258123,
+        0.6288783997297287,
+        0.6288778657714525
+      ]
+    ]
+  },
+  "best": {
+    "latent_dim": 20,
+    "lambda_reg": 1.0,
+    "cv_equal_group_normalized_rmse": 0.6288777726391951
+  }
+}

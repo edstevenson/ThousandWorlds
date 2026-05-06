@@ -1,0 +1,901 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "arrayShape": "cr:arrayShape",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "containedIn": "cr:containedIn",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "dct": "http://purl.org/dc/terms/",
+    "description": {
+      "@container": "@language"
+    },
+    "equivalentProperty": "cr:equivalentProperty",
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    },
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileProperty": "cr:fileProperty",
+    "fileObject": "cr:fileObject",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isArray": "cr:isArray",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "name": {
+      "@container": "@language"
+    },
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "samplingRate": "cr:samplingRate",
+    "sc": "https://schema.org/",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform"
+  },
+  "@type": "sc:Dataset",
+  "@id": "https://doi.org/10.7910/DVN/8IEH6Q",
+  "name": "ThousandWorlds",
+  "description": "Benchmark dataset and baseline result artifacts for exoplanet climate emulation. The release includes simulation input metadata, canonical train/test splits, gridded target fields, spectral coefficients, normalization statistics, baseline predictions, metrics, and per-variable score summaries.",
+  "url": "https://doi.org/10.7910/DVN/8IEH6Q",
+  "identifier": "doi:10.7910/DVN/8IEH6Q",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "creator": [
+    {
+      "@type": "sc:Organization",
+      "name": "ThousandWorlds authors"
+    }
+  ],
+  "keywords": [
+    "exoplanets",
+    "climate emulation",
+    "benchmark",
+    "surrogate modeling",
+    "probabilistic prediction"
+  ],
+  "datePublished": "2026-04-27",
+  "conformsTo": "http://mlcommons.org/croissant/1.1",
+  "rai:dataLimitations": "ThousandWorlds is a benchmark built from numerical exoplanet climate simulations, not observed planets. It is restricted to the released target physical domain, GCM choices, variables, spatial grid, temporal sampling, and benchmark split definitions, and should not be used as direct evidence for habitability, mission planning, or validated climate prediction outside those regimes.",
+  "rai:dataBiases": "The dataset reflects simulator, parameter-design, and preprocessing choices: ExoCAM and UM are target GCMs, auxiliary simulations are not uniformly represented across all benchmark subsets, and model behavior can depend on the released variable coverage and missing-field patterns.",
+  "rai:personalSensitiveInformation": "The dataset contains synthetic/numerical climate simulation outputs and associated physical parameters only. It contains no human-subject data and no personal or sensitive information.",
+  "rai:dataUseCases": "Validated use cases are benchmark development and evaluation for exoplanet climate emulation, surrogate modeling, missing-field handling, and probabilistic prediction over the released train/test protocols. The dataset is not validated for demographic fairness auditing, fine-tuning general-purpose AI systems, operational forecasting, or scientific claims beyond the documented simulation benchmark.",
+  "rai:dataSocialImpact": "Potential benefits include reproducible comparison of climate-emulation methods and broader access to expensive simulation-derived benchmark data. Main risks are overinterpreting benchmark scores or synthetic simulation outputs as observational truth; mitigations include explicit split definitions, public baseline artifacts, documented limitations, and open release metadata.",
+  "rai:hasSyntheticData": true,
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "dataset-archive",
+      "name": "dataset.tar.gz",
+      "description": "Self-contained benchmark dataset archive. Extracts to dataset/ and includes metadata CSVs, split CSVs, gridded field NPZ archives, spectral coefficient NPZ archives, and normalization statistics.",
+      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837300",
+      "encodingFormat": "application/gzip",
+      "sha256": "a81bf5b03fbc06c1c74c157f2a89e503b39cfa00e0802bd01c487b05405818f2"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "results-baselines-multi-partial-deterministic",
+      "name": "results-baselines-multi-partial-deterministic.tar.gz",
+      "description": "Baseline result shard for the multi-partial-deterministic subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
+      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837337",
+      "encodingFormat": "application/gzip",
+      "sha256": "4f8b8bd5f9b64897d4e2a0c0c8f9a5632671b5c9a1b5d27630c86df07115c1d0"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "results-baselines-multi-complete-deterministic",
+      "name": "results-baselines-multi-complete-deterministic.tar.gz",
+      "description": "Baseline result shard for the multi-complete-deterministic subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
+      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837330",
+      "encodingFormat": "application/gzip",
+      "sha256": "cbb1ecf0eb8ec01d291810c060c917ae140368356c01c00084785c3c2d200c89"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "results-baselines-single-complete-deterministic",
+      "name": "results-baselines-single-complete-deterministic.tar.gz",
+      "description": "Baseline result shard for the single-complete-deterministic subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
+      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837344",
+      "encodingFormat": "application/gzip",
+      "sha256": "65caa10e0f3a13678234eb6f36cd5d36a21c213ad95e973e922d546b1c73d005"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "results-baselines-multi-partial-gplfr",
+      "name": "results-baselines-multi-partial-gplfr.tar.gz",
+      "description": "Baseline result shard for the multi-partial-gplfr subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
+      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837339",
+      "encodingFormat": "application/gzip",
+      "sha256": "9acfb68fa73043dc898338a4009261d6b2964700c4076063f6328b42f90dfc76"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "results-baselines-multi-partial-ppca_icm",
+      "name": "results-baselines-multi-partial-ppca_icm.tar.gz",
+      "description": "Baseline result shard for the multi-partial-ppca_icm subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
+      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837342",
+      "encodingFormat": "application/gzip",
+      "sha256": "fbdc304d2fb89814e0b47c474b3fded00c72332d661b9b286fb84cbc19923dc8"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "results-baselines-multi-complete-gplfr",
+      "name": "results-baselines-multi-complete-gplfr.tar.gz",
+      "description": "Baseline result shard for the multi-complete-gplfr subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
+      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837333",
+      "encodingFormat": "application/gzip",
+      "sha256": "dcaac4e953ffb3ad04abd777d0cb8a07f4e6290d73e45991c3e2386d120c48c9"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "results-baselines-multi-complete-ppca_icm",
+      "name": "results-baselines-multi-complete-ppca_icm.tar.gz",
+      "description": "Baseline result shard for the multi-complete-ppca_icm subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
+      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837335",
+      "encodingFormat": "application/gzip",
+      "sha256": "33d8ea984765dbb78a35c600adb672fa9584bf1efe9ebeafd3998ae2c501c8cb"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "results-baselines-single-complete-gplfr",
+      "name": "results-baselines-single-complete-gplfr.tar.gz",
+      "description": "Baseline result shard for the single-complete-gplfr subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
+      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837360",
+      "encodingFormat": "application/gzip",
+      "sha256": "167e268717203d010cb6cf79c17b513ae1378bc8ae1c3cba5c06d0816a085a71"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "results-baselines-single-complete-ppca_icm",
+      "name": "results-baselines-single-complete-ppca_icm.tar.gz",
+      "description": "Baseline result shard for the single-complete-ppca_icm subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
+      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837362",
+      "encodingFormat": "application/gzip",
+      "sha256": "d02dd55199f791b0fcf46bfdf09686553e6035fd0e3dae92930186908655143f"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "inputs-csv",
+      "name": "dataset/inputs.csv",
+      "description": "Simulation input parameters and metadata inside dataset.tar.gz.",
+      "containedIn": {
+        "@id": "dataset-archive"
+      },
+      "encodingFormat": "text/csv",
+      "includes": "dataset/inputs.csv"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "split-csv-files",
+      "name": "dataset/subsets/*/*.csv",
+      "description": "Train, test, shared-planets test, and held-out auxiliary split membership CSVs inside dataset.tar.gz.",
+      "containedIn": {
+        "@id": "dataset-archive"
+      },
+      "encodingFormat": "text/csv",
+      "includes": "dataset/subsets/*/*.csv"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "field-archives",
+      "name": "dataset/fields/*.npz",
+      "description": "Gridded target field NPZ archives inside dataset.tar.gz.",
+      "containedIn": {
+        "@id": "dataset-archive"
+      },
+      "encodingFormat": "application/x-numpy",
+      "includes": "dataset/fields/*.npz"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "coefficient-archives",
+      "name": "dataset/coefficients/*.npz",
+      "description": "Spectral coefficient NPZ archives inside dataset.tar.gz.",
+      "containedIn": {
+        "@id": "dataset-archive"
+      },
+      "encodingFormat": "application/x-numpy",
+      "includes": "dataset/coefficients/*.npz"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "normalization-assets",
+      "name": "dataset/norm_stats/**/*",
+      "description": "Subset-specific normalization statistics and spectral transform metadata inside dataset.tar.gz.",
+      "containedIn": {
+        "@id": "dataset-archive"
+      },
+      "encodingFormat": "application/octet-stream",
+      "includes": "dataset/norm_stats/**/*"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "scores-csv",
+      "name": "results/scores.csv",
+      "description": "Flat per-variable baseline score table included in the baseline result archives and tracked in the source repository.",
+      "containedIn": [
+        {
+          "@id": "results-baselines-multi-partial-deterministic"
+        },
+        {
+          "@id": "results-baselines-multi-complete-deterministic"
+        },
+        {
+          "@id": "results-baselines-single-complete-deterministic"
+        },
+        {
+          "@id": "results-baselines-multi-partial-gplfr"
+        },
+        {
+          "@id": "results-baselines-multi-partial-ppca_icm"
+        },
+        {
+          "@id": "results-baselines-multi-complete-gplfr"
+        },
+        {
+          "@id": "results-baselines-multi-complete-ppca_icm"
+        },
+        {
+          "@id": "results-baselines-single-complete-gplfr"
+        },
+        {
+          "@id": "results-baselines-single-complete-ppca_icm"
+        }
+      ],
+      "encodingFormat": "text/csv",
+      "includes": "results/scores.csv"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "baseline-predictions",
+      "name": "results/models/<subset>/<method>/predictions.npz",
+      "description": "Baseline prediction NPZ files inside the baseline result archives.",
+      "containedIn": [
+        {
+          "@id": "results-baselines-multi-partial-deterministic"
+        },
+        {
+          "@id": "results-baselines-multi-complete-deterministic"
+        },
+        {
+          "@id": "results-baselines-single-complete-deterministic"
+        },
+        {
+          "@id": "results-baselines-multi-partial-gplfr"
+        },
+        {
+          "@id": "results-baselines-multi-partial-ppca_icm"
+        },
+        {
+          "@id": "results-baselines-multi-complete-gplfr"
+        },
+        {
+          "@id": "results-baselines-multi-complete-ppca_icm"
+        },
+        {
+          "@id": "results-baselines-single-complete-gplfr"
+        },
+        {
+          "@id": "results-baselines-single-complete-ppca_icm"
+        }
+      ],
+      "encodingFormat": "application/x-numpy",
+      "includes": "results/models/<subset>/<method>/predictions.npz"
+    },
+    {
+      "@type": "cr:FileSet",
+      "@id": "baseline-metadata",
+      "name": "results/models/**/*.json",
+      "description": "Resolved baseline configs, metrics JSON files, and calibration metadata inside the baseline result archives.",
+      "containedIn": [
+        {
+          "@id": "results-baselines-multi-partial-deterministic"
+        },
+        {
+          "@id": "results-baselines-multi-complete-deterministic"
+        },
+        {
+          "@id": "results-baselines-single-complete-deterministic"
+        },
+        {
+          "@id": "results-baselines-multi-partial-gplfr"
+        },
+        {
+          "@id": "results-baselines-multi-partial-ppca_icm"
+        },
+        {
+          "@id": "results-baselines-multi-complete-gplfr"
+        },
+        {
+          "@id": "results-baselines-multi-complete-ppca_icm"
+        },
+        {
+          "@id": "results-baselines-single-complete-gplfr"
+        },
+        {
+          "@id": "results-baselines-single-complete-ppca_icm"
+        }
+      ],
+      "encodingFormat": "application/json",
+      "includes": "results/models/**/*.json"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "inputs",
+      "name": "inputs",
+      "description": "One row per simulation, containing physical input parameters, GCM labels, split-relevant metadata, and provenance labels.",
+      "key": [
+        {
+          "@id": "inputs/simulation_id"
+        }
+      ],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/simulation_id",
+          "name": "simulation_id",
+          "dataType": "sc:Integer",
+          "description": "Integer simulation identifier used to index field archives, coefficient archives, split CSVs, and predictions.",
+          "source": {
+            "extract": {
+              "column": "simulation_id"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/radius",
+          "name": "radius",
+          "dataType": "sc:Float",
+          "description": "Planet radius in meters.",
+          "source": {
+            "extract": {
+              "column": "radius"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/gravity",
+          "name": "gravity",
+          "dataType": "sc:Float",
+          "description": "Surface gravity in meters per second squared.",
+          "source": {
+            "extract": {
+              "column": "gravity"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/rotation_period",
+          "name": "rotation_period",
+          "dataType": "sc:Float",
+          "description": "Planet rotation period in Earth days.",
+          "source": {
+            "extract": {
+              "column": "rotation_period"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/surface_pressure",
+          "name": "surface_pressure",
+          "dataType": "sc:Float",
+          "description": "Surface pressure in pascals.",
+          "source": {
+            "extract": {
+              "column": "surface_pressure"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/co2",
+          "name": "co2",
+          "dataType": "sc:Float",
+          "description": "Atmospheric CO2 setting used by the simulation.",
+          "source": {
+            "extract": {
+              "column": "co2"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/ch4",
+          "name": "ch4",
+          "dataType": "sc:Float",
+          "description": "Atmospheric CH4 setting used by the simulation.",
+          "source": {
+            "extract": {
+              "column": "ch4"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/stellar_flux",
+          "name": "stellar_flux",
+          "dataType": "sc:Float",
+          "description": "Incident stellar flux in watts per square meter.",
+          "source": {
+            "extract": {
+              "column": "stellar_flux"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/stellar_temperature",
+          "name": "stellar_temperature",
+          "dataType": "sc:Float",
+          "description": "Stellar effective temperature in kelvin.",
+          "source": {
+            "extract": {
+              "column": "stellar_temperature"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/gcm_label",
+          "name": "gcm_label",
+          "dataType": "sc:Text",
+          "description": "General circulation model label for the simulation.",
+          "source": {
+            "extract": {
+              "column": "gcm_label"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/is_target_gcm",
+          "name": "is_target_gcm",
+          "dataType": "sc:Boolean",
+          "description": "Whether the simulation is from a target GCM used in the main benchmark protocols.",
+          "source": {
+            "extract": {
+              "column": "is_target_gcm"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/in_target_physical_domain",
+          "name": "in_target_physical_domain",
+          "dataType": "sc:Boolean",
+          "description": "Whether the simulation lies inside the benchmark target physical domain.",
+          "source": {
+            "extract": {
+              "column": "in_target_physical_domain"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/planet_id",
+          "name": "planet_id",
+          "dataType": "sc:Integer",
+          "description": "Planet identifier used to group cross-GCM simulations of the same planet.",
+          "source": {
+            "extract": {
+              "column": "planet_id"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "inputs/source",
+          "name": "source",
+          "dataType": "sc:Text",
+          "description": "Simulation provenance label.",
+          "source": {
+            "extract": {
+              "column": "source"
+            },
+            "fileSet": {
+              "@id": "inputs-csv"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "subsets",
+      "name": "subsets",
+      "description": "Canonical ThousandWorlds benchmark subsets.",
+      "dataType": "sc:Enumeration",
+      "key": {
+        "@id": "subsets/name"
+      },
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "subsets/name",
+          "name": "name",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "subsets/description",
+          "name": "description",
+          "dataType": "sc:Text"
+        }
+      ],
+      "data": [
+        {
+          "subsets/name": "multi-partial",
+          "subsets/description": "Broadest multi-GCM subset; allows structured whole-field missingness."
+        },
+        {
+          "subsets/name": "multi-complete",
+          "subsets/description": "Multi-GCM subset restricted to fields observed for every included simulation."
+        },
+        {
+          "subsets/name": "single-complete",
+          "subsets/description": "Single-GCM subset restricted to complete observations."
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "partitions",
+      "name": "partitions",
+      "description": "Canonical train/test partition names and their machine-readable ML partition semantics.",
+      "dataType": "cr:Split",
+      "key": {
+        "@id": "partitions/name"
+      },
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "partitions/name",
+          "name": "name",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "partitions/url",
+          "name": "url",
+          "dataType": "sc:Text"
+        }
+      ],
+      "data": [
+        {
+          "partitions/name": "train",
+          "partitions/url": "cr:TrainingSplit"
+        },
+        {
+          "partitions/name": "test",
+          "partitions/url": "cr:TestSplit"
+        },
+        {
+          "partitions/name": "test_shared_planets_only",
+          "partitions/url": "cr:TestSplit"
+        },
+        {
+          "partitions/name": "held_out_aux",
+          "partitions/url": "cr:TestSplit"
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "split_files",
+      "name": "split_files",
+      "description": "Canonical split membership CSV files. Each file contains one simulation_id column.",
+      "dataType": "sc:Enumeration",
+      "key": [
+        {
+          "@id": "split_files/subset"
+        },
+        {
+          "@id": "split_files/partition"
+        }
+      ],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "split_files/subset",
+          "name": "subset",
+          "dataType": "sc:Text",
+          "description": "Benchmark subset."
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "split_files/partition",
+          "name": "partition",
+          "dataType": "sc:Text",
+          "description": "Split file stem."
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "split_files/path",
+          "name": "path",
+          "dataType": "sc:Text",
+          "description": "Path within dataset.tar.gz."
+        }
+      ],
+      "data": [
+        {
+          "split_files/subset": "multi-partial",
+          "split_files/partition": "train",
+          "split_files/path": "dataset/subsets/multi-partial/train.csv"
+        },
+        {
+          "split_files/subset": "multi-partial",
+          "split_files/partition": "test",
+          "split_files/path": "dataset/subsets/multi-partial/test.csv"
+        },
+        {
+          "split_files/subset": "multi-partial",
+          "split_files/partition": "test_shared_planets_only",
+          "split_files/path": "dataset/subsets/multi-partial/test_shared_planets_only.csv"
+        },
+        {
+          "split_files/subset": "multi-partial",
+          "split_files/partition": "held_out_aux",
+          "split_files/path": "dataset/subsets/multi-partial/held_out_aux.csv"
+        },
+        {
+          "split_files/subset": "multi-complete",
+          "split_files/partition": "train",
+          "split_files/path": "dataset/subsets/multi-complete/train.csv"
+        },
+        {
+          "split_files/subset": "multi-complete",
+          "split_files/partition": "test",
+          "split_files/path": "dataset/subsets/multi-complete/test.csv"
+        },
+        {
+          "split_files/subset": "multi-complete",
+          "split_files/partition": "test_shared_planets_only",
+          "split_files/path": "dataset/subsets/multi-complete/test_shared_planets_only.csv"
+        },
+        {
+          "split_files/subset": "multi-complete",
+          "split_files/partition": "held_out_aux",
+          "split_files/path": "dataset/subsets/multi-complete/held_out_aux.csv"
+        },
+        {
+          "split_files/subset": "single-complete",
+          "split_files/partition": "train",
+          "split_files/path": "dataset/subsets/single-complete/train.csv"
+        },
+        {
+          "split_files/subset": "single-complete",
+          "split_files/partition": "test",
+          "split_files/path": "dataset/subsets/single-complete/test.csv"
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "baseline_scores",
+      "name": "baseline_scores",
+      "description": "Flat per-variable baseline score table. One row corresponds to one subset, protocol, method, metric, and output variable.",
+      "key": [
+        {
+          "@id": "baseline_scores/subset"
+        },
+        {
+          "@id": "baseline_scores/protocol"
+        },
+        {
+          "@id": "baseline_scores/method"
+        },
+        {
+          "@id": "baseline_scores/metric"
+        },
+        {
+          "@id": "baseline_scores/variable"
+        }
+      ],
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "baseline_scores/subset",
+          "name": "subset",
+          "dataType": "sc:Text",
+          "description": "Benchmark subset.",
+          "source": {
+            "extract": {
+              "column": "subset"
+            },
+            "fileSet": {
+              "@id": "scores-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "baseline_scores/protocol",
+          "name": "protocol",
+          "dataType": "sc:Text",
+          "description": "Evaluation protocol.",
+          "source": {
+            "extract": {
+              "column": "protocol"
+            },
+            "fileSet": {
+              "@id": "scores-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "baseline_scores/method",
+          "name": "method",
+          "dataType": "sc:Text",
+          "description": "Baseline method name.",
+          "source": {
+            "extract": {
+              "column": "method"
+            },
+            "fileSet": {
+              "@id": "scores-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "baseline_scores/metric",
+          "name": "metric",
+          "dataType": "sc:Text",
+          "description": "Metric name, such as rmse, energy_score, relative_rmse, or relative_energy_score.",
+          "source": {
+            "extract": {
+              "column": "metric"
+            },
+            "fileSet": {
+              "@id": "scores-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "baseline_scores/variable",
+          "name": "variable",
+          "dataType": "sc:Text",
+          "description": "Output variable name after field-level metrics are aggregated to variables.",
+          "source": {
+            "extract": {
+              "column": "variable"
+            },
+            "fileSet": {
+              "@id": "scores-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "baseline_scores/value",
+          "name": "value",
+          "dataType": "sc:Float",
+          "description": "Metric value.",
+          "source": {
+            "extract": {
+              "column": "value"
+            },
+            "fileSet": {
+              "@id": "scores-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "baseline_scores/metrics_path",
+          "name": "metrics_path",
+          "dataType": "sc:Text",
+          "description": "Path to the metrics JSON file within the extracted results tree.",
+          "source": {
+            "extract": {
+              "column": "metrics_path"
+            },
+            "fileSet": {
+              "@id": "scores-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "baseline_scores/predictions_path",
+          "name": "predictions_path",
+          "dataType": "sc:Text",
+          "description": "Path to the prediction NPZ file within the extracted results tree.",
+          "source": {
+            "extract": {
+              "column": "predictions_path"
+            },
+            "fileSet": {
+              "@id": "scores-csv"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "baseline_scores/config_path",
+          "name": "config_path",
+          "dataType": "sc:Text",
+          "description": "Path to the resolved baseline config JSON file within the extracted results tree.",
+          "source": {
+            "extract": {
+              "column": "config_path"
+            },
+            "fileSet": {
+              "@id": "scores-csv"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "version": "1.0",
+  "citeAs": "ThousandWorlds authors. ThousandWorlds: Benchmark dataset for exoplanet climate emulation. Harvard Dataverse. https://doi.org/10.7910/DVN/8IEH6Q"
+}

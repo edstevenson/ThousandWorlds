@@ -1,0 +1,9 @@
+{
+  "method": "train_mean",
+  "subset": "multi-partial",
+  "data_dir": "dataset",
+  "out_dir": "results/models/multi-partial/train_mean",
+  "seed": 0,
+  "dtype": "float64",
+  "device": "auto"
+}

@@ -1,0 +1,29 @@
+{
+  "method": "ppca_icm",
+  "subset": "single-complete",
+  "data_dir": "dataset",
+  "out_dir": "results/models/single-complete/ppca_icm",
+  "seed": 0,
+  "dtype": "float64",
+  "device": "cuda",
+  "ppca_icm": {
+    "latent_dim": 150,
+    "kernel": "matern52",
+    "kernel_mode": "shared",
+    "ppca_iters": 50,
+    "gp_steps": 4000,
+    "gp_lr": 0.001,
+    "n_samples": 64,
+    "hard_stop_step": 1940,
+    "ell_init": 4.0,
+    "linear_trend_cfg": {
+      "enabled": true,
+      "lambda": 0.001,
+      "design": {
+        "intercept": true,
+        "inputs": true,
+        "sim_onehot": false
+      }
+    }
+  }
+}

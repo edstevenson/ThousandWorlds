@@ -1,0 +1,95 @@
+# ThousandWorlds
+
+<img src="imgs/MASCOT.png" align="right" width="220" alt="ThousandWorlds mascot">
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![DOI](https://img.shields.io/badge/DOI-10.7910%2FDVN%2F8IEH6Q-orange.svg)](https://doi.org/10.7910/DVN/8IEH6Q)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
+
+ThousandWorlds is a benchmark for emulating exoplanet climates: **1760 GCM
+simulations** across **5 GCMs**, **8 planet
+parameters**, and atmospheric variables on a 32 x 64 x 10 latitude-longitude-pressure grid.
+It includes three nested benchmark subsets, two evaluation protocols, and eight released baseline methods.
+
+**Dataset:** [Harvard Dataverse](https://doi.org/10.7910/DVN/8IEH6Q)
+
+## Quickstart
+
+```bash
+pip install -e .
+```
+
+```python
+import numpy as np
+import thousandworlds as tw
+
+tw.download_dataset(".")
+bundle = tw.load("single-complete", data_dir="dataset")
+
+pred = np.broadcast_to(bundle.Y_train.mean(axis=0), bundle.Y_test.shape)
+scores = tw.evaluate.rmse(pred, bundle.Y_test, bundle.field_mask_test, bundle.field_names)
+scores["per_variable"]
+```
+
+See [`notebooks/quickstart.ipynb`](notebooks/quickstart.ipynb) for a short
+walkthrough.
+
+![ThousandWorlds dataset schematic](imgs/OVERVIEW.png)
+
+## Running Baselines
+
+```bash
+python -m thousandworlds.run_model train_mean single-complete
+python -m thousandworlds.run_model --config results/models/multi-partial/pca_mlp/config.json
+```
+
+Runs write predictions, metrics, and the resolved config under
+`results/models/<subset>/<method>/`. Full GPLFR reruns require accelerator
+hardware; released predictions and metrics are the reference artifacts.
+
+## Installation
+
+```bash
+pip install -e .              # core: data loading + evaluation
+pip install -e '.[models]'    # baseline model dependencies
+pip install -e '.[notebooks]' # notebook dependencies
+```
+
+## Dataset
+
+The benchmark dataset is hosted on
+[Harvard Dataverse](https://doi.org/10.7910/DVN/8IEH6Q). The repository already
+contains metadata and directory layout; this fills in the large array files:
+
+```bash
+python -c "import thousandworlds as tw; tw.download_dataset('.')"
+```
+
+Published baseline prediction results are distributed as separate Dataverse archives:
+
+```bash
+python -c "import thousandworlds as tw; tw.download_baselines('.')"
+```
+
+## Repo Structure
+
+```
+thousandworlds/
+  data.py               # download + load 
+  preprocessing.py      # input/output transforms, normalization
+  spectral.py           # spectral coefficients <-> gridded fields
+  evaluate.py           # RMSE, ACC, energy score, spread-skill ratio, etc.
+  run_model.py          # CLI entry point
+  make_model_tables.py  # regenerate result tables
+  assets/               # precomputed SHT matrix, latitude weights
+
+models/                 # baseline implementations
+dataset/                # inputs.csv, subset CSVs, arrays after download
+results/                # configs, metrics, published tables
+notebooks/              # quickstart, pca_mlp worked example
+tests/                  # test suite
+```
+
+## Citation
+
+Coming soon!

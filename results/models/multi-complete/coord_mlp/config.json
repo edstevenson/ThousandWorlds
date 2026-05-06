@@ -1,0 +1,21 @@
+{
+  "method": "coord_mlp",
+  "subset": "multi-complete",
+  "data_dir": "dataset",
+  "out_dir": "results/models/multi-complete/coord_mlp",
+  "seed": 0,
+  "dtype": "float32",
+  "device": "cpu",
+  "coord_mlp": {
+    "hidden_width": 1024,
+    "num_layers": 4,
+    "activation": "tanh",
+    "batch_size": 128,
+    "predict_chunk_size": 262144,
+    "num_steps": 8000,
+    "lr": 0.0003,
+    "weight_decay": 0.0,
+    "hard_stop_step": 7700,
+    "preset": "multi-complete"
+  }
+}

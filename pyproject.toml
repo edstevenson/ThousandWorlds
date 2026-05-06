@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "thousandworlds"
+version = "0.1.0"
+description = "ThousandWorlds benchmark for exoplanet climate emulation"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "requests",
+]
+
+[project.optional-dependencies]
+models = [
+    "beartype",
+    "jaxtyping",
+    "pyro-ppl",
+    "scikit-learn",
+    "torch",
+]
+notebooks = [
+    "jupyter",
+]
+
+[tool.setuptools.packages.find]
+include = ["thousandworlds*", "models*"]
+
+[tool.setuptools.package-data]
+thousandworlds = ["assets/*.npy"]
+
+[tool.pytest.ini_options]
+markers = [
+    "requires_dataset: requires the full ThousandWorlds NPZ dataset (call tw.download_dataset first)",
+]

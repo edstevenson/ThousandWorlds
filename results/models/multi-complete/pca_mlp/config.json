@@ -1,0 +1,29 @@
+{
+  "method": "pca_mlp",
+  "subset": "multi-complete",
+  "data_dir": "dataset",
+  "out_dir": "results/models/multi-complete/pca_mlp",
+  "seed": 0,
+  "dtype": "float64",
+  "device": "cuda",
+  "pca_mlp": {
+    "latent_dim": 50,
+    "hidden_width": 1024,
+    "activation": "silu",
+    "ppca_iters": 50,
+    "num_steps": 4000,
+    "lr": 0.0003,
+    "weight_decay": 0.0001,
+    "hard_stop_step": 630,
+    "linear_trend_cfg": {
+      "enabled": true,
+      "lambda": 0.001,
+      "design": {
+        "intercept": true,
+        "inputs": true,
+        "sim_onehot": false
+      }
+    },
+    "preset": "multi-complete"
+  }
+}

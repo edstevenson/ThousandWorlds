@@ -1,0 +1,30 @@
+{
+  "subset": "multi-partial",
+  "protocol": "standard",
+  "n_test": 100,
+  "n_samples": 64,
+  "rmse": {
+    "per_variable": {
+      "surface_temperature": 10.595566749572754,
+      "temperature": 8.733705425262452,
+      "specific_humidity_dex": 0.46078861355781553,
+      "cloud_fraction": 0.047540092887356875,
+      "u": 9.925890374183655,
+      "v": 4.297325801849365,
+      "asr": 24.83138656616211,
+      "olr": 16.89706802368164
+    }
+  },
+  "energy_score": {
+    "per_variable": {
+      "surface_temperature": 8.155213356018066,
+      "temperature": 6.937788391113282,
+      "specific_humidity_dex": 0.367787230014801,
+      "cloud_fraction": 0.036321868235245344,
+      "u": 7.656749415397644,
+      "v": 3.2817174673080443,
+      "asr": 19.986740112304688,
+      "olr": 13.044418334960938
+    }
+  }
+}

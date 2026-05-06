@@ -1,0 +1,9 @@
+{
+  "method": "train_mean",
+  "subset": "multi-complete",
+  "data_dir": "dataset",
+  "out_dir": "results/models/multi-complete/train_mean",
+  "seed": 0,
+  "dtype": "float64",
+  "device": "auto"
+}

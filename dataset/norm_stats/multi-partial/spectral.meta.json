@@ -1,0 +1,330 @@
+{
+  "asr_olr_normalize_by_f_star": true,
+  "coefficient_order": "ScalarSHEncoder.sht_flat_real",
+  "csphase": true,
+  "equatorial_symmetry": true,
+  "fields": {
+    "asr_cloudy": {
+      "base_variable": "asr_cloudy",
+      "count": 1607,
+      "num_coeffs": 484,
+      "sigma": 0.39402759766669554
+    },
+    "cloud_fraction_0": {
+      "base_variable": "cloud_fraction",
+      "count": 1549,
+      "num_coeffs": 484,
+      "sigma": 7.640281697410002
+    },
+    "cloud_fraction_1": {
+      "base_variable": "cloud_fraction",
+      "count": 1607,
+      "num_coeffs": 484,
+      "sigma": 7.755607814684045
+    },
+    "cloud_fraction_2": {
+      "base_variable": "cloud_fraction",
+      "count": 1609,
+      "num_coeffs": 484,
+      "sigma": 7.676967934815424
+    },
+    "cloud_fraction_3": {
+      "base_variable": "cloud_fraction",
+      "count": 1609,
+      "num_coeffs": 484,
+      "sigma": 7.082211350531522
+    },
+    "cloud_fraction_4": {
+      "base_variable": "cloud_fraction",
+      "count": 1609,
+      "num_coeffs": 484,
+      "sigma": 6.6438823752183245
+    },
+    "cloud_fraction_5": {
+      "base_variable": "cloud_fraction",
+      "count": 1609,
+      "num_coeffs": 484,
+      "sigma": 6.563671981390776
+    },
+    "cloud_fraction_6": {
+      "base_variable": "cloud_fraction",
+      "count": 1609,
+      "num_coeffs": 484,
+      "sigma": 6.493302579744685
+    },
+    "cloud_fraction_7": {
+      "base_variable": "cloud_fraction",
+      "count": 1609,
+      "num_coeffs": 484,
+      "sigma": 6.719162116187268
+    },
+    "cloud_fraction_8": {
+      "base_variable": "cloud_fraction",
+      "count": 1607,
+      "num_coeffs": 484,
+      "sigma": 7.03150050304746
+    },
+    "cloud_fraction_9": {
+      "base_variable": "cloud_fraction",
+      "count": 647,
+      "num_coeffs": 484,
+      "sigma": 6.130823868850887
+    },
+    "olr_cloudy": {
+      "base_variable": "olr_cloudy",
+      "count": 1607,
+      "num_coeffs": 484,
+      "sigma": 0.16374971451968498
+    },
+    "specific_humidity_0": {
+      "base_variable": "specific_humidity",
+      "count": 1562,
+      "num_coeffs": 484,
+      "sigma": 15.348783359974423
+    },
+    "specific_humidity_1": {
+      "base_variable": "specific_humidity",
+      "count": 1620,
+      "num_coeffs": 484,
+      "sigma": 15.331439230518159
+    },
+    "specific_humidity_2": {
+      "base_variable": "specific_humidity",
+      "count": 1622,
+      "num_coeffs": 484,
+      "sigma": 16.033035682673283
+    },
+    "specific_humidity_3": {
+      "base_variable": "specific_humidity",
+      "count": 1622,
+      "num_coeffs": 484,
+      "sigma": 17.70954555080913
+    },
+    "specific_humidity_4": {
+      "base_variable": "specific_humidity",
+      "count": 1622,
+      "num_coeffs": 484,
+      "sigma": 19.348292153109487
+    },
+    "specific_humidity_5": {
+      "base_variable": "specific_humidity",
+      "count": 1622,
+      "num_coeffs": 484,
+      "sigma": 22.064784472497152
+    },
+    "specific_humidity_6": {
+      "base_variable": "specific_humidity",
+      "count": 1622,
+      "num_coeffs": 484,
+      "sigma": 24.6634727203297
+    },
+    "specific_humidity_7": {
+      "base_variable": "specific_humidity",
+      "count": 1622,
+      "num_coeffs": 484,
+      "sigma": 27.47538286545829
+    },
+    "specific_humidity_8": {
+      "base_variable": "specific_humidity",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 30.880504265729304
+    },
+    "specific_humidity_9": {
+      "base_variable": "specific_humidity",
+      "count": 676,
+      "num_coeffs": 484,
+      "sigma": 25.974425944310124
+    },
+    "surface_temperature": {
+      "base_variable": "surface_temperature",
+      "count": 1626,
+      "num_coeffs": 484,
+      "sigma": 205.75192033016904
+    },
+    "temperature_0": {
+      "base_variable": "temperature",
+      "count": 1566,
+      "num_coeffs": 484,
+      "sigma": 165.31959021961995
+    },
+    "temperature_1": {
+      "base_variable": "temperature",
+      "count": 1624,
+      "num_coeffs": 484,
+      "sigma": 162.23284040716146
+    },
+    "temperature_2": {
+      "base_variable": "temperature",
+      "count": 1626,
+      "num_coeffs": 484,
+      "sigma": 159.12801341961526
+    },
+    "temperature_3": {
+      "base_variable": "temperature",
+      "count": 1626,
+      "num_coeffs": 484,
+      "sigma": 158.83651779809878
+    },
+    "temperature_4": {
+      "base_variable": "temperature",
+      "count": 1626,
+      "num_coeffs": 484,
+      "sigma": 164.1789030248508
+    },
+    "temperature_5": {
+      "base_variable": "temperature",
+      "count": 1626,
+      "num_coeffs": 484,
+      "sigma": 168.0172651821265
+    },
+    "temperature_6": {
+      "base_variable": "temperature",
+      "count": 1626,
+      "num_coeffs": 484,
+      "sigma": 174.33995450100056
+    },
+    "temperature_7": {
+      "base_variable": "temperature",
+      "count": 1626,
+      "num_coeffs": 484,
+      "sigma": 175.69902085027306
+    },
+    "temperature_8": {
+      "base_variable": "temperature",
+      "count": 1624,
+      "num_coeffs": 484,
+      "sigma": 186.7379544648876
+    },
+    "temperature_9": {
+      "base_variable": "temperature",
+      "count": 664,
+      "num_coeffs": 484,
+      "sigma": 156.45310066421166
+    },
+    "u_0": {
+      "base_variable": "u",
+      "count": 1561,
+      "num_coeffs": 484,
+      "sigma": 15.693115566237928
+    },
+    "u_1": {
+      "base_variable": "u",
+      "count": 1619,
+      "num_coeffs": 484,
+      "sigma": 18.291384795312013
+    },
+    "u_2": {
+      "base_variable": "u",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 25.205371900450118
+    },
+    "u_3": {
+      "base_variable": "u",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 33.041857259265626
+    },
+    "u_4": {
+      "base_variable": "u",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 42.822690379428714
+    },
+    "u_5": {
+      "base_variable": "u",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 52.681744496535245
+    },
+    "u_6": {
+      "base_variable": "u",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 61.5773656181686
+    },
+    "u_7": {
+      "base_variable": "u",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 69.53514734856252
+    },
+    "u_8": {
+      "base_variable": "u",
+      "count": 1619,
+      "num_coeffs": 484,
+      "sigma": 79.24235348290266
+    },
+    "u_9": {
+      "base_variable": "u",
+      "count": 659,
+      "num_coeffs": 484,
+      "sigma": 129.90134429898765
+    },
+    "v_0": {
+      "base_variable": "v",
+      "count": 1561,
+      "num_coeffs": 484,
+      "sigma": 10.313692195901552
+    },
+    "v_1": {
+      "base_variable": "v",
+      "count": 1619,
+      "num_coeffs": 484,
+      "sigma": 11.459015073259792
+    },
+    "v_2": {
+      "base_variable": "v",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 14.278270659531179
+    },
+    "v_3": {
+      "base_variable": "v",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 17.552694431535716
+    },
+    "v_4": {
+      "base_variable": "v",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 21.393153021886427
+    },
+    "v_5": {
+      "base_variable": "v",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 24.822853145726725
+    },
+    "v_6": {
+      "base_variable": "v",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 27.44960145103596
+    },
+    "v_7": {
+      "base_variable": "v",
+      "count": 1621,
+      "num_coeffs": 484,
+      "sigma": 28.63150390516308
+    },
+    "v_8": {
+      "base_variable": "v",
+      "count": 1619,
+      "num_coeffs": 484,
+      "sigma": 29.68137203547312
+    },
+    "v_9": {
+      "base_variable": "v",
+      "count": 659,
+      "num_coeffs": 484,
+      "sigma": 34.321247491985886
+    }
+  },
+  "grid_type": "legendre-gauss",
+  "l_max": 21,
+  "real_coefficients": true,
+  "sh_normalization": "ortho"
+}

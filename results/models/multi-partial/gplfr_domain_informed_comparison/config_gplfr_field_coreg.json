@@ -1,0 +1,22 @@
+{
+  "method": "gplfr",
+  "subset": "multi-partial",
+  "data_dir": "dataset",
+  "out_dir": "results/models/multi-partial/gplfr_domain_informed_comparison",
+  "seed": 0,
+  "dtype": "float64",
+  "device": "cuda",
+  "gplfr": {
+    "latent_dim": 150,
+    "num_training_steps": 65,
+    "inverse_temperature": 0.1,
+    "latent_nugget": 0.1,
+    "optimizer": {
+      "lr_Z": 0.1,
+      "lr_global": 0.3
+    },
+    "variable_weights": "fixed",
+    "output_coregionalization": "field_coregionalized"
+  },
+  "comparison_variant": "gplfr_field_coreg"
+}

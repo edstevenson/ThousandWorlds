@@ -1,0 +1,30 @@
+{
+  "method": "coord_deeponet",
+  "subset": "multi-complete",
+  "data_dir": "dataset",
+  "out_dir": "results/models/multi-complete/coord_deeponet",
+  "seed": 0,
+  "dtype": "float32",
+  "device": "cuda",
+  "coord_deeponet": {
+    "rank": 128,
+    "branch_hidden_width": 256,
+    "trunk_hidden_width": 512,
+    "branch_num_layers": 3,
+    "trunk_num_layers": 3,
+    "activation": "silu",
+    "batch_size": 32768,
+    "predict_chunk_size": 262144,
+    "num_steps": 1750,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "hard_stop_step": null,
+    "optimizer": "AdamW",
+    "target_normalization": "per_field_training_grid_latitude_weighted",
+    "coordinate_encoding": "t21_lat_mu_lon_sincos",
+    "sampling": "base_variable_first_area_weighted_latitude",
+    "cv_objective": "area_weighted_equal_base_variable_normalized_rmse_grid",
+    "equatorial_symmetry": true,
+    "preset": null
+  }
+}

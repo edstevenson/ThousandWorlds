@@ -1,0 +1,21 @@
+{
+  "method": "gplfr",
+  "subset": "single-complete",
+  "data_dir": "dataset",
+  "out_dir": "results/models/single-complete/gplfr",
+  "seed": 0,
+  "dtype": "float64",
+  "device": "cuda",
+  "gplfr": {
+    "latent_dim": 150,
+    "num_training_steps": 135,
+    "inverse_temperature": 0.1,
+    "latent_nugget": 0.1,
+    "optimizer": {
+      "lr_Z": 0.1,
+      "lr_global": 0.3
+    },
+    "variable_weights": "fixed",
+    "output_coregionalization": "none"
+  }
+}

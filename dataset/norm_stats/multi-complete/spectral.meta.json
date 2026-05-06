@@ -1,0 +1,300 @@
+{
+  "asr_olr_normalize_by_f_star": true,
+  "coefficient_order": "ScalarSHEncoder.sht_flat_real",
+  "csphase": true,
+  "equatorial_symmetry": true,
+  "fields": {
+    "asr_cloudy": {
+      "base_variable": "asr_cloudy",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 0.39731509795799
+    },
+    "cloud_fraction_0": {
+      "base_variable": "cloud_fraction",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 7.633799067048894
+    },
+    "cloud_fraction_1": {
+      "base_variable": "cloud_fraction",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 7.749163332127469
+    },
+    "cloud_fraction_2": {
+      "base_variable": "cloud_fraction",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 7.626435281430697
+    },
+    "cloud_fraction_3": {
+      "base_variable": "cloud_fraction",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 7.062236569027932
+    },
+    "cloud_fraction_4": {
+      "base_variable": "cloud_fraction",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 6.6668436994224525
+    },
+    "cloud_fraction_5": {
+      "base_variable": "cloud_fraction",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 6.62984140619888
+    },
+    "cloud_fraction_6": {
+      "base_variable": "cloud_fraction",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 6.567604541898507
+    },
+    "cloud_fraction_7": {
+      "base_variable": "cloud_fraction",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 6.809499052589289
+    },
+    "cloud_fraction_8": {
+      "base_variable": "cloud_fraction",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 7.126014482209866
+    },
+    "olr_cloudy": {
+      "base_variable": "olr_cloudy",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 0.1644710691241173
+    },
+    "specific_humidity_0": {
+      "base_variable": "specific_humidity",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 15.427749888989457
+    },
+    "specific_humidity_1": {
+      "base_variable": "specific_humidity",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 15.514259410890627
+    },
+    "specific_humidity_2": {
+      "base_variable": "specific_humidity",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 16.247072335338437
+    },
+    "specific_humidity_3": {
+      "base_variable": "specific_humidity",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 17.94638067964521
+    },
+    "specific_humidity_4": {
+      "base_variable": "specific_humidity",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 19.59877682362711
+    },
+    "specific_humidity_5": {
+      "base_variable": "specific_humidity",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 22.337721333797052
+    },
+    "specific_humidity_6": {
+      "base_variable": "specific_humidity",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 24.940196118424062
+    },
+    "specific_humidity_7": {
+      "base_variable": "specific_humidity",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 27.748892527681114
+    },
+    "specific_humidity_8": {
+      "base_variable": "specific_humidity",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 31.13694454072794
+    },
+    "surface_temperature": {
+      "base_variable": "surface_temperature",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 208.74742455111138
+    },
+    "temperature_0": {
+      "base_variable": "temperature",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 166.01910759482777
+    },
+    "temperature_1": {
+      "base_variable": "temperature",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 163.87316784612185
+    },
+    "temperature_2": {
+      "base_variable": "temperature",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 161.30225693275145
+    },
+    "temperature_3": {
+      "base_variable": "temperature",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 161.77213062468067
+    },
+    "temperature_4": {
+      "base_variable": "temperature",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 167.515497759135
+    },
+    "temperature_5": {
+      "base_variable": "temperature",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 171.3923469828709
+    },
+    "temperature_6": {
+      "base_variable": "temperature",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 177.50287794866767
+    },
+    "temperature_7": {
+      "base_variable": "temperature",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 178.1669931873518
+    },
+    "temperature_8": {
+      "base_variable": "temperature",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 188.4842782906043
+    },
+    "u_0": {
+      "base_variable": "u",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 15.747855638406337
+    },
+    "u_1": {
+      "base_variable": "u",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 17.819099792557243
+    },
+    "u_2": {
+      "base_variable": "u",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 24.615836040171107
+    },
+    "u_3": {
+      "base_variable": "u",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 32.50611250794307
+    },
+    "u_4": {
+      "base_variable": "u",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 42.416285394236695
+    },
+    "u_5": {
+      "base_variable": "u",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 52.4050052465497
+    },
+    "u_6": {
+      "base_variable": "u",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 61.41578115579498
+    },
+    "u_7": {
+      "base_variable": "u",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 69.45484621383105
+    },
+    "u_8": {
+      "base_variable": "u",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 79.13063603200655
+    },
+    "v_0": {
+      "base_variable": "v",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 10.33536313585023
+    },
+    "v_1": {
+      "base_variable": "v",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 11.254965344965616
+    },
+    "v_2": {
+      "base_variable": "v",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 13.991761083307653
+    },
+    "v_3": {
+      "base_variable": "v",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 17.269070996421966
+    },
+    "v_4": {
+      "base_variable": "v",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 21.16739744262026
+    },
+    "v_5": {
+      "base_variable": "v",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 24.635921430598753
+    },
+    "v_6": {
+      "base_variable": "v",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 27.238298261062663
+    },
+    "v_7": {
+      "base_variable": "v",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 28.283915441229592
+    },
+    "v_8": {
+      "base_variable": "v",
+      "count": 1538,
+      "num_coeffs": 484,
+      "sigma": 29.292422908192393
+    }
+  },
+  "grid_type": "legendre-gauss",
+  "l_max": 21,
+  "real_coefficients": true,
+  "sh_normalization": "ortho"
+}
