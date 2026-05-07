@@ -1,5 +1,9 @@
 from pathlib import Path
 
+import pytest
+
+pytest.importorskip("torch")
+
 from thousandworlds.make_model_tables import _clear_generated_files
 
 

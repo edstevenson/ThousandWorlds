@@ -6,6 +6,9 @@ import subprocess
 import sys
 
 import numpy as np
+import pytest
+
+pytest.importorskip("torch")
 import torch
 
 import thousandworlds.models as models

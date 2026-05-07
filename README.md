@@ -3,7 +3,7 @@
 <img src="imgs/MASCOT.png" align="right" width="220" alt="ThousandWorlds mascot">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Dataset](https://img.shields.io/badge/dataset-Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/es833/ThousandWorlds)
+[![Dataset DOI](https://img.shields.io/badge/dataset-10.57967%2Fhf%2F8695-yellow.svg)](https://doi.org/10.57967/hf/8695)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 
 The search for life beyond Earth depends on the molecular signatures it leaves
@@ -50,7 +50,7 @@ pip install -e '.[notebooks]' # notebook dependencies
 ## Dataset
 
 The benchmark dataset is hosted on
-[Hugging Face](https://huggingface.co/datasets/es833/ThousandWorlds). The
+[Hugging Face](https://doi.org/10.57967/hf/8695). The
 repository already contains metadata and directory layout; this fills in the
 large array files:
 

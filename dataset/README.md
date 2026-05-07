@@ -1,8 +1,9 @@
 # Dataset layout
 
-The Hugging Face dataset archive extracts to `dataset/`. It contains simulation
-metadata, subset CSVs, gridded climate fields, spectral coefficients, and
-normalization assets used by the public loaders and baselines.
+The [Hugging Face dataset archive](https://doi.org/10.57967/hf/8695) extracts
+to `dataset/`. It contains simulation metadata, subset CSVs, gridded climate
+fields, spectral coefficients, and normalization assets used by the public
+loaders and baselines.
 
 ## Inputs
 
@@ -123,7 +124,8 @@ used by the public preprocessing code:
 
 ## Baseline results
 
-Baseline predictions are distributed in separate Hugging Face archives:
+Baseline predictions are distributed in separate
+[Hugging Face archives](https://doi.org/10.57967/hf/8695):
 
 - `results-baselines-<subset>-deterministic.tar.gz`
 - `results-baselines-<subset>-gplfr.tar.gz`

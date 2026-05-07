@@ -7,6 +7,8 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+
+pytest.importorskip("torch")
 import torch
 
 import thousandworlds.models as models
