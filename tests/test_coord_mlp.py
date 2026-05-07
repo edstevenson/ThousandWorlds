@@ -9,7 +9,7 @@ import numpy as np
 import torch
 
 import thousandworlds.models as models
-from thousandworlds.thousandworlds import run_model
+from thousandworlds import run_model
 from thousandworlds.models.coord_mlp import CoordMLP, parse_field_name
 
 

@@ -126,6 +126,7 @@ def _relative_variable_means(
 
 
 def _metric_space(arr: np.ndarray, field_names: list[str], *, humidity: str | None) -> np.ndarray:
+    """Convert humidity fields before scoring when metrics are reported in log space."""
     out = np.asarray(arr, dtype=np.float32).copy()
     if humidity is None:
         return out

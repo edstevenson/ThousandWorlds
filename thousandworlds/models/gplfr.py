@@ -16,7 +16,7 @@ GPLFR_LINEAR_TREND_CFG = {
 
 
 class GPLFR:
-    """EWB recipe wrapper around the standard-clean MAP GPLFR core."""
+    """Public ThousandWorlds GPLFR baseline."""
 
     def __init__(
         self,

@@ -1,7 +1,3 @@
-from pathlib import Path
-
-__path__.append(str(Path(__file__).resolve().parents[1]))
-
 from . import data, evaluate, preprocessing, schema, spectral
 from .evaluate import score, score_predictions
 from .data import (
@@ -11,11 +7,6 @@ from .data import (
     DATASET_PAGE_URL,
     DATA_URL,
     DATA_URL_ENVVAR,
-    GRID_SHAPE,
-    N_COEFFS,
-    T,
-    TARGET_PHYSICAL_DOMAIN,
-    TARGET_GCMS,
     DataBundle,
     download,
     download_baselines,
@@ -51,10 +42,15 @@ from .schema import (
     BENCHMARK_SPLITS,
     BENCHMARK_SPACES,
     BENCHMARK_SUBSETS,
+    GRID_SHAPE,
+    N_COEFFS,
     PROTOCOL_TO_TEST_FILE,
     SPACE_TO_ARCHIVE_DIR,
     SUBSET_TO_ARCHIVE,
     SUBSET_TO_FIELDS,
+    T,
+    TARGET_GCMS,
+    TARGET_PHYSICAL_DOMAIN,
     canonical_field_names,
     resolve_data_root,
     subset_path,

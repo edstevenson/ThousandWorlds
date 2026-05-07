@@ -116,7 +116,7 @@ def test_run_model_help_lists_supported_methods():
     )
     assert "{train_mean,knn,pca_ridge,pca_mlp,ppca_icm,gplfr,coord_mlp,coord_deeponet}" in result.stdout
     assert "1,2,3,5,10" in result.stdout
-    assert "0.0,0.3,1.0,3.0" in result.stdout
+    assert "0.0,0.3,1.0,3.0,10.0" in result.stdout
     assert "--lambda-reg" in result.stdout
     assert "--cv-latent-dim" in result.stdout
     assert "--cv-lambda" in result.stdout

@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "setuptools-scm"]
+requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -28,7 +28,7 @@ notebooks = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["thousandworlds*", "models*"]
+include = ["thousandworlds*"]
 
 [tool.setuptools.package-data]
 thousandworlds = ["assets/*.npy"]

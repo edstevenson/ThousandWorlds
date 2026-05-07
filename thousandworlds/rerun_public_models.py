@@ -1,5 +1,5 @@
 from __future__ import annotations
-"""Batch wrapper around ``python -m thousandworlds.run_model`` for the public non-GPLFR matrix."""
+"""Batch wrapper around ``python -m thousandworlds.run_model`` for the public model matrix."""
 
 import argparse
 from pathlib import Path
@@ -13,7 +13,7 @@ METHODS = ("train_mean", "knn", "pca_ridge", "pca_mlp", "ppca_icm", "gplfr", "co
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="python -m thousandworlds.rerun_public_models", description="Rerun the public non-GPLFR ThousandWorlds model matrix.")
+    parser = argparse.ArgumentParser(prog="python -m thousandworlds.rerun_public_models", description="Rerun the public ThousandWorlds model matrix. GPLFR entries expect CUDA.")
     parser.add_argument("--data-dir", type=Path, default=Path("dataset"))
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--methods", nargs="*", choices=METHODS, default=list(METHODS))

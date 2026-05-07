@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import hashlib
 import tarfile
+import time
 
 import numpy as np
 import pandas as pd
@@ -12,13 +13,7 @@ import requests
 
 from .field_spec import CANONICAL_INPUT_NAMES, public_field_names
 from .schema import (
-    GRID_SHAPE,
-    N_COEFFS,
     SUBSET_TO_FIELDS,
-    T,
-    TARGET_PHYSICAL_DOMAIN,
-    TARGET_GCMS,
-    _looks_like_data_root,
     resolve_data_root,
     subset_path,
     support_path,
@@ -108,7 +103,7 @@ def _load_archive(data_root: Path, subset: str, space: str) -> tuple[np.ndarray,
         raise FileNotFoundError(
             f"Missing benchmark archive {path}. "
             f"Place the extracted dataset under {data_root}, call thousandworlds.download_dataset(...), "
-            f"or set {DATA_URL_ENVVAR} to a private/public dataset archive URL."
+            f"or set {DATA_URL_ENVVAR} to another dataset archive URL."
         )
     key = "fields" if space == "grid" else "coefficients"
     with np.load(path, allow_pickle=False) as npz:
@@ -199,6 +194,14 @@ def _maybe_sha256(url: str) -> str | None:
     return None
 
 
+def _format_bytes(n: int) -> str:
+    for unit in ("B", "KB", "MB", "GB"):
+        if n < 1024 or unit == "GB":
+            return f"{n:.1f} {unit}" if unit != "B" else f"{n} B"
+        n /= 1024
+    return f"{n:.1f} GB"
+
+
 def _checked_tar_members(tar: tarfile.TarFile, dest_dir: Path) -> list[tarfile.TarInfo]:
     dest_root = dest_dir.resolve()
     members = tar.getmembers()
@@ -265,19 +268,33 @@ def download(
     if archive_path.exists() and not force:
         return archive_path
 
-    checksum = _maybe_sha256(url) or KNOWN_SHA256.get(url)
+    checksum = KNOWN_SHA256.get(url) or _maybe_sha256(url)
     with requests.get(url, stream=True, timeout=60) as resp:
         resp.raise_for_status()
+        total = int(resp.headers.get("content-length", 0))
+        print(f"Downloading {archive_path.name}" + (f" ({_format_bytes(total)})" if total else "") + "...", flush=True)
         digest = hashlib.sha256()
+        downloaded = 0
+        last_update = 0.0
         with archive_path.open("wb") as fh:
             for chunk in resp.iter_content(chunk_size=1 << 20):
                 if not chunk:
                     continue
                 fh.write(chunk)
                 digest.update(chunk)
+                downloaded += len(chunk)
+                now = time.monotonic()
+                if now - last_update >= 1.0:
+                    if total:
+                        print(f"  {downloaded / total:5.1%} ({_format_bytes(downloaded)} / {_format_bytes(total)})", flush=True)
+                    else:
+                        print(f"  {_format_bytes(downloaded)}", flush=True)
+                    last_update = now
+        print(f"Downloaded {archive_path.name} ({_format_bytes(downloaded)}).", flush=True)
     if checksum and digest.hexdigest() != checksum:
         raise ValueError(f"SHA256 mismatch for {archive_path.name}.")
     if tarfile.is_tarfile(archive_path):
+        print(f"Extracting {archive_path.name}...", flush=True)
         _extract_tar(
             archive_path,
             dest_dir,
@@ -285,6 +302,7 @@ def download(
             protected_existing_names=protected_existing_names,
             skip_existing_members=skip_existing_members,
         )
+        print(f"Extracted {archive_path.name}.", flush=True)
     return archive_path
 
 

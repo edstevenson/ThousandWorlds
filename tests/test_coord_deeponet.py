@@ -9,7 +9,7 @@ import numpy as np
 import torch
 
 import thousandworlds.models as models
-from thousandworlds.thousandworlds import run_model
+from thousandworlds import run_model
 from thousandworlds.models.coord_deeponet import CoordDeepONet
 from thousandworlds.models._coordinate import BaseVariableSampler, field_metadata, parse_field_name, t21_coordinate_features
 

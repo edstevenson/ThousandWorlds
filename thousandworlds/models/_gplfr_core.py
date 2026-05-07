@@ -82,13 +82,11 @@ class GPLFRCore:
         kernel: Literal["rbf", "matern32", "matern52"] = "rbf",
         latent_scales_ratio: float = 1.0,
         ell_mode: Literal["shared", "per_latent"] | int | float = "shared",
-        kernel_groups: Literal["shared", "per_latent"] | int | None = None,
         sigma_f_mode: Literal["shared", "per_latent"] | int | float = "shared",
         learn_sigma_f: bool = False,
         eta_lkj: float = 1.0,
         jitter: float = 1e-6,
         nugget_noise: float | None = None,
-        nugget_jitter: float | None = None,
         nugget_noise_by_sim: list[float] | Tensor | None = None,
         sh_T: int = 21,
         dtype: torch.dtype = torch.float64,
@@ -111,7 +109,6 @@ class GPLFRCore:
                 geometric decay of latent decoder scales.
             ell_mode: Lengthscale mode; `'shared'`, `'per_latent'`, integer
                 group count, or float (fixed shared ell value).
-            kernel_groups: Deprecated alias for ell_mode.
             sigma_f_mode: Latent GP amplitude mode; `'shared'`, `'per_latent'`,
                 integer group count, or float (fixed shared sigma_f value).
             learn_sigma_f: If True, fixes sigma_f=1.0 (disables learning latent GP amplitudes).
@@ -119,7 +116,6 @@ class GPLFRCore:
             jitter: Numerical stability jitter for covariance matrices
             nugget_noise: Additive diagonal term for the latent GP covariance (K <- K + nugget_noise I),
                 distinct from numerical `jitter`.
-            nugget_jitter: Deprecated alias for nugget_noise.
             nugget_noise_by_sim: Optional per-sim nugget (length n_sim_types); if set, `nugget_noise`
                 is ignored and the per-sim base values are used instead.
             sh_T: Spherical harmonics truncation used to infer degree mapping across coefficients
@@ -134,20 +130,12 @@ class GPLFRCore:
             inverse_temperature: Fixed multiplier on the collapsed decoder log likelihood.
         """
         self.latent_dim = latent_dim
-        # fit() switches to direct_z before optimization.
-        # Default to whitened so direct calls to model() (e.g. prior Predictive in tests)
-        # behave consistently without requiring a preceding fit().
+        # The prior model uses whitened latents; fit() switches to direct latents for MAP optimization.
         self._latent_param_mode: Literal["whitened", "direct_z"] = "whitened"
         self.n_sim_types = n_sim_types
         self.kernel: Literal["rbf", "matern32", "matern52"] = kernel
         self.ell_fixed: float | None = None
         self.kernel_groups: Literal["shared", "per_latent"] | int = "shared"
-        if kernel_groups is not None:
-            if ell_mode != "shared":
-                raise ValueError("Pass only ell_mode or kernel_groups (deprecated).")
-            if isinstance(kernel_groups, int) and int(kernel_groups) < 1:
-                raise ValueError("kernel_groups must be >= 1.")
-            ell_mode = kernel_groups
         if isinstance(ell_mode, float):
             self.ell_fixed = float(ell_mode)
             self.kernel_groups = "shared"
@@ -181,9 +169,7 @@ class GPLFRCore:
         self.eta_lkj = eta_lkj
         self.jitter = jitter
         if nugget_noise is None:
-            nugget_noise = 0.0 if nugget_jitter is None else float(nugget_jitter)
-        elif nugget_jitter is not None:
-            raise ValueError("Pass only nugget_noise (preferred) or nugget_jitter (deprecated).")
+            nugget_noise = 0.0
         self.nugget_noise = float(nugget_noise)
         self._nugget_noise_by_sim: list[float] | None = None
         if nugget_noise_by_sim is not None:
