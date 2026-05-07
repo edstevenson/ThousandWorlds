@@ -4,7 +4,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Dataset](https://img.shields.io/badge/dataset-Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/es833/ThousandWorlds)
-[![DOI](https://img.shields.io/badge/DOI-10.7910%2FDVN%2F8IEH6Q-orange.svg)](https://doi.org/10.7910/DVN/8IEH6Q)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 
 ThousandWorlds is a benchmark for emulating exoplanet climates: **1760 GCM
@@ -13,7 +12,6 @@ parameters**, and atmospheric variables on a 32 x 64 x 10 latitude-longitude-pre
 It includes three nested benchmark subsets, two evaluation protocols, and eight released baseline methods.
 
 **Dataset:** [Hugging Face](https://huggingface.co/datasets/es833/ThousandWorlds)
-([Dataverse mirror](https://doi.org/10.7910/DVN/8IEH6Q))
 
 <br>
 
@@ -51,10 +49,9 @@ pip install -e '.[notebooks]' # notebook dependencies
 ## Dataset
 
 The benchmark dataset is hosted on
-[Hugging Face](https://huggingface.co/datasets/es833/ThousandWorlds), with an
-archival mirror on [Harvard Dataverse](https://doi.org/10.7910/DVN/8IEH6Q).
-The repository already contains metadata and directory layout; this fills in
-the large array files:
+[Hugging Face](https://huggingface.co/datasets/es833/ThousandWorlds). The
+repository already contains metadata and directory layout; this fills in the
+large array files:
 
 ```bash
 python -c "import thousandworlds as tw; tw.download_dataset('.')"

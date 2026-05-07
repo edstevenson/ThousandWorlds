@@ -34,9 +34,7 @@ CSV_TO_INPUT = {
     "CO2": "co2",
     "CH4": "ch4",
 }
-DATASET_DOI = "doi:10.7910/DVN/8IEH6Q"
 DATASET_PAGE_URL = "https://huggingface.co/datasets/es833/ThousandWorlds"
-DATASET_MIRROR_URL = "https://doi.org/10.7910/DVN/8IEH6Q"
 DATA_URL_ENVVAR = "THOUSANDWORLDS_DATA_URL"
 HF_ARCHIVE_ROOT = "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives"
 DATA_URL = f"{HF_ARCHIVE_ROOT}/dataset.tar.gz"

@@ -60,7 +60,7 @@
   "name": "ThousandWorlds",
   "description": "Benchmark dataset and baseline result artifacts for exoplanet climate emulation. The release includes simulation input metadata, canonical train/test splits, gridded target fields, spectral coefficients, normalization statistics, baseline predictions, metrics, and per-variable score summaries.",
   "url": "https://huggingface.co/datasets/es833/ThousandWorlds",
-  "identifier": "doi:10.7910/DVN/8IEH6Q",
+  "identifier": "https://huggingface.co/datasets/es833/ThousandWorlds",
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "creator": [
     {
@@ -951,5 +951,5 @@
     }
   ],
   "version": "1.0",
-  "citeAs": "Stevenson, E. T., Mak, M. T., Wolf, E., Sergeev, D. E., Hammond, T., Mayne, N. J., and Cranmer, M. ThousandWorlds: Benchmark dataset for exoplanet climate emulation. Hugging Face. https://huggingface.co/datasets/es833/ThousandWorlds. Archival mirror: https://doi.org/10.7910/DVN/8IEH6Q"
+  "citeAs": "Stevenson, E. T., Mak, M. T., Wolf, E., Sergeev, D. E., Hammond, T., Mayne, N. J., and Cranmer, M. ThousandWorlds: Benchmark dataset for exoplanet climate emulation. Hugging Face. https://huggingface.co/datasets/es833/ThousandWorlds"
 }
