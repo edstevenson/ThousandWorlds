@@ -229,15 +229,15 @@
       "sha256": "380331557807129ce722cc0884ec2518b7b334733fefc88e5e5797a1361860b5"
     },
     {
-      "@type": "cr:FileSet",
+      "@type": "cr:FileObject",
       "@id": "inputs-csv",
       "name": "dataset/inputs.csv",
       "description": "Simulation input parameters and metadata inside dataset.tar.gz.",
+      "contentUrl": "dataset/inputs.csv",
       "containedIn": {
         "@id": "dataset-archive"
       },
-      "encodingFormat": "text/csv",
-      "includes": "dataset/inputs.csv"
+      "encodingFormat": "text/csv"
     },
     {
       "@type": "cr:FileSet",
@@ -284,41 +284,15 @@
       "includes": "dataset/norm_stats/**/*"
     },
     {
-      "@type": "cr:FileSet",
+      "@type": "cr:FileObject",
       "@id": "scores-csv",
       "name": "results/scores.csv",
-      "description": "Flat per-variable baseline score table included in the baseline result archives and tracked in the source repository.",
-      "containedIn": [
-        {
-          "@id": "results-baselines-multi-partial-deterministic"
-        },
-        {
-          "@id": "results-baselines-multi-complete-deterministic"
-        },
-        {
-          "@id": "results-baselines-single-complete-deterministic"
-        },
-        {
-          "@id": "results-baselines-multi-partial-gplfr"
-        },
-        {
-          "@id": "results-baselines-multi-partial-ppca_icm"
-        },
-        {
-          "@id": "results-baselines-multi-complete-gplfr"
-        },
-        {
-          "@id": "results-baselines-multi-complete-ppca_icm"
-        },
-        {
-          "@id": "results-baselines-single-complete-gplfr"
-        },
-        {
-          "@id": "results-baselines-single-complete-ppca_icm"
-        }
-      ],
-      "encodingFormat": "text/csv",
-      "includes": "results/scores.csv"
+      "description": "Flat per-variable baseline score table included in the deterministic baseline archives and tracked in the source repository.",
+      "contentUrl": "results/scores.csv",
+      "containedIn": {
+        "@id": "results-baselines-single-complete-deterministic"
+      },
+      "encodingFormat": "text/csv"
     },
     {
       "@type": "cr:FileSet",
@@ -417,7 +391,7 @@
             "extract": {
               "column": "simulation_id"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -432,7 +406,7 @@
             "extract": {
               "column": "radius"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -447,7 +421,7 @@
             "extract": {
               "column": "gravity"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -462,7 +436,7 @@
             "extract": {
               "column": "rotation_period"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -477,7 +451,7 @@
             "extract": {
               "column": "surface_pressure"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -492,7 +466,7 @@
             "extract": {
               "column": "co2"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -507,7 +481,7 @@
             "extract": {
               "column": "ch4"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -522,7 +496,7 @@
             "extract": {
               "column": "stellar_flux"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -537,7 +511,7 @@
             "extract": {
               "column": "stellar_temperature"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -552,7 +526,7 @@
             "extract": {
               "column": "gcm_label"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -567,7 +541,7 @@
             "extract": {
               "column": "is_target_gcm"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -582,7 +556,7 @@
             "extract": {
               "column": "in_target_physical_domain"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -597,7 +571,7 @@
             "extract": {
               "column": "planet_id"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -612,7 +586,7 @@
             "extract": {
               "column": "source"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "inputs-csv"
             }
           }
@@ -822,7 +796,7 @@
             "extract": {
               "column": "subset"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "scores-csv"
             }
           }
@@ -837,7 +811,7 @@
             "extract": {
               "column": "protocol"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "scores-csv"
             }
           }
@@ -852,7 +826,7 @@
             "extract": {
               "column": "method"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "scores-csv"
             }
           }
@@ -867,7 +841,7 @@
             "extract": {
               "column": "metric"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "scores-csv"
             }
           }
@@ -882,7 +856,7 @@
             "extract": {
               "column": "variable"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "scores-csv"
             }
           }
@@ -897,7 +871,7 @@
             "extract": {
               "column": "value"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "scores-csv"
             }
           }
@@ -912,7 +886,7 @@
             "extract": {
               "column": "metrics_path"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "scores-csv"
             }
           }
@@ -927,7 +901,7 @@
             "extract": {
               "column": "predictions_path"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "scores-csv"
             }
           }
@@ -942,7 +916,7 @@
             "extract": {
               "column": "config_path"
             },
-            "fileSet": {
+            "fileObject": {
               "@id": "scores-csv"
             }
           }
