@@ -16,7 +16,7 @@ two evaluation protocols, and eight released baseline methods.
 
 <br>
 
-![ThousandWorlds dataset schematic](imgs/OVERVIEW.png)
+![ThousandWorlds dataset schematic](imgs/OVERVIEW.png?v=20260507)
 
 ## Quickstart
 
