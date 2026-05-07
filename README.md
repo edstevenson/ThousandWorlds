@@ -6,12 +6,13 @@
 [![Dataset](https://img.shields.io/badge/dataset-Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/es833/ThousandWorlds)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 
-ThousandWorlds is a benchmark for emulating exoplanet climates: **1760 GCM
-simulations** across **5 GCMs**, **8 planet
-parameters**, and atmospheric variables on a 32 x 64 x 10 latitude-longitude-pressure grid.
-It includes three nested benchmark subsets, two evaluation protocols, and eight released baseline methods.
-
-**Dataset:** [Hugging Face](https://huggingface.co/datasets/es833/ThousandWorlds)
+The search for life beyond Earth depends on the molecular signatures it leaves
+behind in the atmospheres of habitable exoplanets. Correctly interpreting these
+signatures requires understanding the planet's climate. **ThousandWorlds** is a
+benchmark for emulating these exoplanet climates: **1760 GCM simulations**
+across 5 GCMs, 8 planet parameters, and atmospheric variables on a 32 x 64 x 10
+latitude-longitude-pressure grid. It includes three nested benchmark subsets,
+two evaluation protocols, and eight released baseline methods.
 
 <br>
 
@@ -84,9 +85,9 @@ thousandworlds/
   evaluate.py           # RMSE, ACC, energy score, spread-skill ratio, etc.
   run_model.py          # CLI entry point
   make_model_tables.py  # regenerate result tables
+  models/               # baseline implementations
   assets/               # precomputed SHT matrix, latitude weights
 
-models/                 # baseline implementations
 dataset/                # inputs.csv, subset CSVs, arrays after download
 results/                # configs, metrics, published tables
 notebooks/              # quickstart, pca_mlp worked example
