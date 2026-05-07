@@ -33,7 +33,6 @@ from ._run_model_config import (
     PCA_RIDGE_DESIGN_CFG,
     PCA_RIDGE_LINEAR_TREND_CFG,
     PPCA_ICM_LINEAR_TREND_CFG,
-    TW_ROOT,
     _coord_deeponet_hparams,
     _coord_mlp_hparams,
     _gplfr_hparams,
@@ -141,10 +140,6 @@ def run(
         "meta": result.get("meta", {}),
         "data": data,
     }
-
-
-def _gplfr_stats_dir(subset: str) -> Path:
-    return TW_ROOT / "dataset" / "norm_stats" / subset
 
 
 def _gplfr_inverse_preprocess_grid(Y: np.ndarray, field_names: list[str], stats: tw.Stats, field_idxs: list[int]) -> np.ndarray:
@@ -560,7 +555,7 @@ def _run_gplfr(args: argparse.Namespace) -> dict:
 
     torch = _torch()
     hparams = _gplfr_hparams(args, getattr(args, "_config", None))
-    stats_dir = _gplfr_stats_dir(args.subset)
+    stats_dir = Path(args.data_dir) / "norm_stats" / args.subset
     data = prepare_tw_data(args.subset, data_dir=args.data_dir, stats_dir=stats_dir)
     Y_train = np.transpose(tw.normalise_spectral(data.spectral_bundle.Y_train, data.spectral_bundle.raw_field_names, data.stats), (0, 2, 1))
     model = GPLFR(
