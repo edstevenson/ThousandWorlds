@@ -1,10 +1,10 @@
 # ThousandWorlds
 
+<img src="imgs/MASCOT.png" align="right" width="220" alt="ThousandWorlds mascot">
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Dataset](https://img.shields.io/badge/dataset-Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/es833/ThousandWorlds)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
-
-<img src="imgs/MASCOT.png" align="right" width="220" alt="ThousandWorlds mascot">
 
 ThousandWorlds is a benchmark for emulating exoplanet climates: **1760 GCM
 simulations** across **5 GCMs**, **8 planet
