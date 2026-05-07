@@ -1,8 +1,9 @@
-# ThousandWorlds
-
 <img src="imgs/MASCOT.png" align="right" width="220" alt="ThousandWorlds mascot">
 
+# ThousandWorlds
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Dataset](https://img.shields.io/badge/dataset-Hugging%20Face-yellow.svg)](https://huggingface.co/datasets/es833/ThousandWorlds)
 [![DOI](https://img.shields.io/badge/DOI-10.7910%2FDVN%2F8IEH6Q-orange.svg)](https://doi.org/10.7910/DVN/8IEH6Q)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 
@@ -11,7 +12,8 @@ simulations** across **5 GCMs**, **8 planet
 parameters**, and atmospheric variables on a 32 x 64 x 10 latitude-longitude-pressure grid.
 It includes three nested benchmark subsets, two evaluation protocols, and eight released baseline methods.
 
-**Dataset:** [Harvard Dataverse](https://doi.org/10.7910/DVN/8IEH6Q)
+**Dataset:** [Hugging Face](https://huggingface.co/datasets/es833/ThousandWorlds)
+([Dataverse mirror](https://doi.org/10.7910/DVN/8IEH6Q))
 
 <br>
 
@@ -49,14 +51,16 @@ pip install -e '.[notebooks]' # notebook dependencies
 ## Dataset
 
 The benchmark dataset is hosted on
-[Harvard Dataverse](https://doi.org/10.7910/DVN/8IEH6Q). The repository already
-contains metadata and directory layout; this fills in the large array files:
+[Hugging Face](https://huggingface.co/datasets/es833/ThousandWorlds), with an
+archival mirror on [Harvard Dataverse](https://doi.org/10.7910/DVN/8IEH6Q).
+The repository already contains metadata and directory layout; this fills in
+the large array files:
 
 ```bash
 python -c "import thousandworlds as tw; tw.download_dataset('.')"
 ```
 
-Published baseline prediction results are distributed as separate Dataverse archives:
+Published baseline prediction results are distributed as separate archives:
 
 ```bash
 python -c "import thousandworlds as tw; tw.download_baselines('.')"
@@ -70,8 +74,8 @@ python -m thousandworlds.run_model --config results/models/multi-partial/pca_mlp
 ```
 
 Runs write predictions, metrics, and the resolved config under
-`results/models/<subset>/<method>/`. Full GPLFR reruns require accelerator
-hardware; released predictions and metrics are the reference artifacts.
+`results/models/<subset>/<method>/`. The checked-in configs can be rerun with
+`--config`; GPLFR configs expect CUDA.
 
 ## Repo Structure
 
@@ -94,4 +98,13 @@ tests/                  # test suite
 
 ## Citation
 
-Coming soon!
+If you use ThousandWorlds, please cite the paper:
+
+```bibtex
+@misc{thousandworlds2026,
+  title = {ThousandWorlds: A Benchmark for Exoplanet Climate Emulation},
+  author = {{ThousandWorlds authors}},
+  year = {2026},
+  note = {Manuscript in preparation}
+}
+```

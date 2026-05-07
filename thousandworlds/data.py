@@ -35,9 +35,11 @@ CSV_TO_INPUT = {
     "CH4": "ch4",
 }
 DATASET_DOI = "doi:10.7910/DVN/8IEH6Q"
-DATASET_PAGE_URL = "https://doi.org/10.7910/DVN/8IEH6Q"
+DATASET_PAGE_URL = "https://huggingface.co/datasets/es833/ThousandWorlds"
+DATASET_MIRROR_URL = "https://doi.org/10.7910/DVN/8IEH6Q"
 DATA_URL_ENVVAR = "THOUSANDWORLDS_DATA_URL"
-DATA_URL = "https://dataverse.harvard.edu/api/access/datafile/13837300"
+HF_ARCHIVE_ROOT = "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives"
+DATA_URL = f"{HF_ARCHIVE_ROOT}/dataset.tar.gz"
 BASELINES_URLS_ENVVAR = "THOUSANDWORLDS_BASELINES_URLS"
 BASELINES_RESULTS_ARCHIVES = (
     "results-baselines-multi-partial-deterministic.tar.gz",
@@ -51,27 +53,27 @@ BASELINES_RESULTS_ARCHIVES = (
     "results-baselines-single-complete-ppca_icm.tar.gz",
 )
 BASELINES_URLS = (
-    "https://dataverse.harvard.edu/api/access/datafile/13837337",
-    "https://dataverse.harvard.edu/api/access/datafile/13837330",
-    "https://dataverse.harvard.edu/api/access/datafile/13837344",
-    "https://dataverse.harvard.edu/api/access/datafile/13837339",
-    "https://dataverse.harvard.edu/api/access/datafile/13837342",
-    "https://dataverse.harvard.edu/api/access/datafile/13837333",
-    "https://dataverse.harvard.edu/api/access/datafile/13837335",
-    "https://dataverse.harvard.edu/api/access/datafile/13837360",
-    "https://dataverse.harvard.edu/api/access/datafile/13837362",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-deterministic.tar.gz",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-deterministic.tar.gz",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-deterministic.tar.gz",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-gplfr.tar.gz",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-ppca_icm.tar.gz",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-gplfr.tar.gz",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-ppca_icm.tar.gz",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-gplfr.tar.gz",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-ppca_icm.tar.gz",
 )
 KNOWN_SHA256 = {
-    "https://dataverse.harvard.edu/api/access/datafile/13837300": "a81bf5b03fbc06c1c74c157f2a89e503b39cfa00e0802bd01c487b05405818f2",
-    "https://dataverse.harvard.edu/api/access/datafile/13837337": "4f8b8bd5f9b64897d4e2a0c0c8f9a5632671b5c9a1b5d27630c86df07115c1d0",
-    "https://dataverse.harvard.edu/api/access/datafile/13837330": "cbb1ecf0eb8ec01d291810c060c917ae140368356c01c00084785c3c2d200c89",
-    "https://dataverse.harvard.edu/api/access/datafile/13837344": "65caa10e0f3a13678234eb6f36cd5d36a21c213ad95e973e922d546b1c73d005",
-    "https://dataverse.harvard.edu/api/access/datafile/13837339": "9acfb68fa73043dc898338a4009261d6b2964700c4076063f6328b42f90dfc76",
-    "https://dataverse.harvard.edu/api/access/datafile/13837342": "fbdc304d2fb89814e0b47c474b3fded00c72332d661b9b286fb84cbc19923dc8",
-    "https://dataverse.harvard.edu/api/access/datafile/13837333": "dcaac4e953ffb3ad04abd777d0cb8a07f4e6290d73e45991c3e2386d120c48c9",
-    "https://dataverse.harvard.edu/api/access/datafile/13837335": "33d8ea984765dbb78a35c600adb672fa9584bf1efe9ebeafd3998ae2c501c8cb",
-    "https://dataverse.harvard.edu/api/access/datafile/13837360": "167e268717203d010cb6cf79c17b513ae1378bc8ae1c3cba5c06d0816a085a71",
-    "https://dataverse.harvard.edu/api/access/datafile/13837362": "d02dd55199f791b0fcf46bfdf09686553e6035fd0e3dae92930186908655143f",
+    f"{HF_ARCHIVE_ROOT}/dataset.tar.gz": "356c6cc14f6d23f6ffaef2155bfb668f6e365e07bb5b2f83736afa5343dae8b3",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-deterministic.tar.gz": "59f9979ed6c31fba1f43163485ba821e8cc486e1ca1893148528568b3a00b5ab",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-deterministic.tar.gz": "204c492fd2af1b921946b1a9de07e39e8581c4f18cb01490b123bebf74cbc789",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-deterministic.tar.gz": "9725c008210b7c6bd5094a7707da0c305629fc36e9d533876ea85edde492ff9d",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-gplfr.tar.gz": "add9bcd8ba3761200ac89d013e259ebafeeb221b71043d062609ab3708ae2613",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-ppca_icm.tar.gz": "5d65fabd3662ce5da4aa0f3d1480285e633e6e1819e8c1a3e0f128b0017ae30a",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-gplfr.tar.gz": "099018b9bb4c98fbc479889bd3a977fa249e0602fa8d7cd57f7a3ac78d42d356",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-ppca_icm.tar.gz": "c3578059971aae6d3323b52dab27ad6f8133dcff7fefb8d79074a737200c21e3",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-gplfr.tar.gz": "cf5a54f053836e0cd6758fa24c64d9d51ee1130c39831522dea12e8a59529a15",
+    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-ppca_icm.tar.gz": "380331557807129ce722cc0884ec2518b7b334733fefc88e5e5797a1361860b5",
 }
 
 

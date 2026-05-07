@@ -56,16 +56,70 @@
     "transform": "cr:transform"
   },
   "@type": "sc:Dataset",
-  "@id": "https://doi.org/10.7910/DVN/8IEH6Q",
+  "@id": "https://huggingface.co/datasets/es833/ThousandWorlds",
   "name": "ThousandWorlds",
   "description": "Benchmark dataset and baseline result artifacts for exoplanet climate emulation. The release includes simulation input metadata, canonical train/test splits, gridded target fields, spectral coefficients, normalization statistics, baseline predictions, metrics, and per-variable score summaries.",
-  "url": "https://doi.org/10.7910/DVN/8IEH6Q",
+  "url": "https://huggingface.co/datasets/es833/ThousandWorlds",
   "identifier": "doi:10.7910/DVN/8IEH6Q",
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "creator": [
     {
-      "@type": "sc:Organization",
-      "name": "ThousandWorlds authors"
+      "@type": "sc:Person",
+      "name": "Edward T. Stevenson",
+      "affiliation": {
+        "@type": "sc:Organization",
+        "name": "University of Cambridge"
+      },
+      "email": "es833@cam.ac.uk"
+    },
+    {
+      "@type": "sc:Person",
+      "name": "Mei Ting Mak",
+      "affiliation": {
+        "@type": "sc:Organization",
+        "name": "University of Oxford"
+      }
+    },
+    {
+      "@type": "sc:Person",
+      "name": "Eric Wolf",
+      "affiliation": {
+        "@type": "sc:Organization",
+        "name": "University of Colorado Boulder"
+      }
+    },
+    {
+      "@type": "sc:Person",
+      "name": "Denis E. Sergeev",
+      "affiliation": {
+        "@type": "sc:Organization",
+        "name": "University of Bristol"
+      }
+    },
+    {
+      "@type": "sc:Person",
+      "name": "Tobi Hammond",
+      "affiliation": {
+        "@type": "sc:Organization",
+        "name": "Purdue University"
+      }
+    },
+    {
+      "@type": "sc:Person",
+      "name": "N. J. Mayne",
+      "affiliation": {
+        "@type": "sc:Organization",
+        "name": "University of Exeter"
+      }
+    },
+    {
+      "@type": "sc:Person",
+      "name": "Miles Cranmer",
+      "affiliation": {
+        "@type": "sc:Organization",
+        "name": "University of Cambridge"
+      },
+      "email": "mc2473@cam.ac.uk"
     }
   ],
   "keywords": [
@@ -89,90 +143,90 @@
       "@id": "dataset-archive",
       "name": "dataset.tar.gz",
       "description": "Self-contained benchmark dataset archive. Extracts to dataset/ and includes metadata CSVs, split CSVs, gridded field NPZ archives, spectral coefficient NPZ archives, and normalization statistics.",
-      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837300",
+      "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/dataset.tar.gz",
       "encodingFormat": "application/gzip",
-      "sha256": "a81bf5b03fbc06c1c74c157f2a89e503b39cfa00e0802bd01c487b05405818f2"
+      "sha256": "356c6cc14f6d23f6ffaef2155bfb668f6e365e07bb5b2f83736afa5343dae8b3"
     },
     {
       "@type": "cr:FileObject",
       "@id": "results-baselines-multi-partial-deterministic",
       "name": "results-baselines-multi-partial-deterministic.tar.gz",
       "description": "Baseline result shard for the multi-partial-deterministic subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
-      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837337",
+      "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-partial-deterministic.tar.gz",
       "encodingFormat": "application/gzip",
-      "sha256": "4f8b8bd5f9b64897d4e2a0c0c8f9a5632671b5c9a1b5d27630c86df07115c1d0"
+      "sha256": "59f9979ed6c31fba1f43163485ba821e8cc486e1ca1893148528568b3a00b5ab"
     },
     {
       "@type": "cr:FileObject",
       "@id": "results-baselines-multi-complete-deterministic",
       "name": "results-baselines-multi-complete-deterministic.tar.gz",
       "description": "Baseline result shard for the multi-complete-deterministic subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
-      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837330",
+      "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-complete-deterministic.tar.gz",
       "encodingFormat": "application/gzip",
-      "sha256": "cbb1ecf0eb8ec01d291810c060c917ae140368356c01c00084785c3c2d200c89"
+      "sha256": "204c492fd2af1b921946b1a9de07e39e8581c4f18cb01490b123bebf74cbc789"
     },
     {
       "@type": "cr:FileObject",
       "@id": "results-baselines-single-complete-deterministic",
       "name": "results-baselines-single-complete-deterministic.tar.gz",
       "description": "Baseline result shard for the single-complete-deterministic subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
-      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837344",
+      "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-single-complete-deterministic.tar.gz",
       "encodingFormat": "application/gzip",
-      "sha256": "65caa10e0f3a13678234eb6f36cd5d36a21c213ad95e973e922d546b1c73d005"
+      "sha256": "9725c008210b7c6bd5094a7707da0c305629fc36e9d533876ea85edde492ff9d"
     },
     {
       "@type": "cr:FileObject",
       "@id": "results-baselines-multi-partial-gplfr",
       "name": "results-baselines-multi-partial-gplfr.tar.gz",
       "description": "Baseline result shard for the multi-partial-gplfr subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
-      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837339",
+      "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-partial-gplfr.tar.gz",
       "encodingFormat": "application/gzip",
-      "sha256": "9acfb68fa73043dc898338a4009261d6b2964700c4076063f6328b42f90dfc76"
+      "sha256": "add9bcd8ba3761200ac89d013e259ebafeeb221b71043d062609ab3708ae2613"
     },
     {
       "@type": "cr:FileObject",
       "@id": "results-baselines-multi-partial-ppca_icm",
       "name": "results-baselines-multi-partial-ppca_icm.tar.gz",
       "description": "Baseline result shard for the multi-partial-ppca_icm subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
-      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837342",
+      "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-partial-ppca_icm.tar.gz",
       "encodingFormat": "application/gzip",
-      "sha256": "fbdc304d2fb89814e0b47c474b3fded00c72332d661b9b286fb84cbc19923dc8"
+      "sha256": "5d65fabd3662ce5da4aa0f3d1480285e633e6e1819e8c1a3e0f128b0017ae30a"
     },
     {
       "@type": "cr:FileObject",
       "@id": "results-baselines-multi-complete-gplfr",
       "name": "results-baselines-multi-complete-gplfr.tar.gz",
       "description": "Baseline result shard for the multi-complete-gplfr subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
-      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837333",
+      "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-complete-gplfr.tar.gz",
       "encodingFormat": "application/gzip",
-      "sha256": "dcaac4e953ffb3ad04abd777d0cb8a07f4e6290d73e45991c3e2386d120c48c9"
+      "sha256": "099018b9bb4c98fbc479889bd3a977fa249e0602fa8d7cd57f7a3ac78d42d356"
     },
     {
       "@type": "cr:FileObject",
       "@id": "results-baselines-multi-complete-ppca_icm",
       "name": "results-baselines-multi-complete-ppca_icm.tar.gz",
       "description": "Baseline result shard for the multi-complete-ppca_icm subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
-      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837335",
+      "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-complete-ppca_icm.tar.gz",
       "encodingFormat": "application/gzip",
-      "sha256": "33d8ea984765dbb78a35c600adb672fa9584bf1efe9ebeafd3998ae2c501c8cb"
+      "sha256": "c3578059971aae6d3323b52dab27ad6f8133dcff7fefb8d79074a737200c21e3"
     },
     {
       "@type": "cr:FileObject",
       "@id": "results-baselines-single-complete-gplfr",
       "name": "results-baselines-single-complete-gplfr.tar.gz",
       "description": "Baseline result shard for the single-complete-gplfr subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
-      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837360",
+      "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-single-complete-gplfr.tar.gz",
       "encodingFormat": "application/gzip",
-      "sha256": "167e268717203d010cb6cf79c17b513ae1378bc8ae1c3cba5c06d0816a085a71"
+      "sha256": "cf5a54f053836e0cd6758fa24c64d9d51ee1130c39831522dea12e8a59529a15"
     },
     {
       "@type": "cr:FileObject",
       "@id": "results-baselines-single-complete-ppca_icm",
       "name": "results-baselines-single-complete-ppca_icm.tar.gz",
       "description": "Baseline result shard for the single-complete-ppca_icm subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
-      "contentUrl": "https://dataverse.harvard.edu/api/access/datafile/13837362",
+      "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-single-complete-ppca_icm.tar.gz",
       "encodingFormat": "application/gzip",
-      "sha256": "d02dd55199f791b0fcf46bfdf09686553e6035fd0e3dae92930186908655143f"
+      "sha256": "380331557807129ce722cc0884ec2518b7b334733fefc88e5e5797a1361860b5"
     },
     {
       "@type": "cr:FileSet",
@@ -897,5 +951,5 @@
     }
   ],
   "version": "1.0",
-  "citeAs": "ThousandWorlds authors. ThousandWorlds: Benchmark dataset for exoplanet climate emulation. Harvard Dataverse. https://doi.org/10.7910/DVN/8IEH6Q"
+  "citeAs": "Stevenson, E. T., Mak, M. T., Wolf, E., Sergeev, D. E., Hammond, T., Mayne, N. J., and Cranmer, M. ThousandWorlds: Benchmark dataset for exoplanet climate emulation. Hugging Face. https://huggingface.co/datasets/es833/ThousandWorlds. Archival mirror: https://doi.org/10.7910/DVN/8IEH6Q"
 }
