@@ -144,7 +144,7 @@
       "name": "dataset.tar.gz",
       "description": "Self-contained benchmark dataset archive. Extracts to dataset/ and includes metadata CSVs, split CSVs, gridded field NPZ archives, spectral coefficient NPZ archives, and normalization statistics.",
       "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/dataset.tar.gz",
-      "encodingFormat": "application/gzip",
+      "encodingFormat": "application/x-tar",
       "sha256": "356c6cc14f6d23f6ffaef2155bfb668f6e365e07bb5b2f83736afa5343dae8b3"
     },
     {
@@ -153,7 +153,7 @@
       "name": "results-baselines-multi-partial-deterministic.tar.gz",
       "description": "Baseline result shard for the multi-partial-deterministic subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
       "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-partial-deterministic.tar.gz",
-      "encodingFormat": "application/gzip",
+      "encodingFormat": "application/x-tar",
       "sha256": "59f9979ed6c31fba1f43163485ba821e8cc486e1ca1893148528568b3a00b5ab"
     },
     {
@@ -162,7 +162,7 @@
       "name": "results-baselines-multi-complete-deterministic.tar.gz",
       "description": "Baseline result shard for the multi-complete-deterministic subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
       "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-complete-deterministic.tar.gz",
-      "encodingFormat": "application/gzip",
+      "encodingFormat": "application/x-tar",
       "sha256": "204c492fd2af1b921946b1a9de07e39e8581c4f18cb01490b123bebf74cbc789"
     },
     {
@@ -171,7 +171,7 @@
       "name": "results-baselines-single-complete-deterministic.tar.gz",
       "description": "Baseline result shard for the single-complete-deterministic subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
       "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-single-complete-deterministic.tar.gz",
-      "encodingFormat": "application/gzip",
+      "encodingFormat": "application/x-tar",
       "sha256": "9725c008210b7c6bd5094a7707da0c305629fc36e9d533876ea85edde492ff9d"
     },
     {
@@ -180,7 +180,7 @@
       "name": "results-baselines-multi-partial-gplfr.tar.gz",
       "description": "Baseline result shard for the multi-partial-gplfr subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
       "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-partial-gplfr.tar.gz",
-      "encodingFormat": "application/gzip",
+      "encodingFormat": "application/x-tar",
       "sha256": "add9bcd8ba3761200ac89d013e259ebafeeb221b71043d062609ab3708ae2613"
     },
     {
@@ -189,7 +189,7 @@
       "name": "results-baselines-multi-partial-ppca_icm.tar.gz",
       "description": "Baseline result shard for the multi-partial-ppca_icm subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
       "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-partial-ppca_icm.tar.gz",
-      "encodingFormat": "application/gzip",
+      "encodingFormat": "application/x-tar",
       "sha256": "5d65fabd3662ce5da4aa0f3d1480285e633e6e1819e8c1a3e0f128b0017ae30a"
     },
     {
@@ -198,7 +198,7 @@
       "name": "results-baselines-multi-complete-gplfr.tar.gz",
       "description": "Baseline result shard for the multi-complete-gplfr subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
       "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-complete-gplfr.tar.gz",
-      "encodingFormat": "application/gzip",
+      "encodingFormat": "application/x-tar",
       "sha256": "099018b9bb4c98fbc479889bd3a977fa249e0602fa8d7cd57f7a3ac78d42d356"
     },
     {
@@ -207,7 +207,7 @@
       "name": "results-baselines-multi-complete-ppca_icm.tar.gz",
       "description": "Baseline result shard for the multi-complete-ppca_icm subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
       "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-multi-complete-ppca_icm.tar.gz",
-      "encodingFormat": "application/gzip",
+      "encodingFormat": "application/x-tar",
       "sha256": "c3578059971aae6d3323b52dab27ad6f8133dcff7fefb8d79074a737200c21e3"
     },
     {
@@ -216,7 +216,7 @@
       "name": "results-baselines-single-complete-gplfr.tar.gz",
       "description": "Baseline result shard for the single-complete-gplfr subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
       "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-single-complete-gplfr.tar.gz",
-      "encodingFormat": "application/gzip",
+      "encodingFormat": "application/x-tar",
       "sha256": "cf5a54f053836e0cd6758fa24c64d9d51ee1130c39831522dea12e8a59529a15"
     },
     {
@@ -225,7 +225,7 @@
       "name": "results-baselines-single-complete-ppca_icm.tar.gz",
       "description": "Baseline result shard for the single-complete-ppca_icm subset. Extracts to results/ and includes predictions, metrics JSON, paper tables, scores.csv, and results/README.md for this subset.",
       "contentUrl": "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives/results-baselines-single-complete-ppca_icm.tar.gz",
-      "encodingFormat": "application/gzip",
+      "encodingFormat": "application/x-tar",
       "sha256": "380331557807129ce722cc0884ec2518b7b334733fefc88e5e5797a1361860b5"
     },
     {
