@@ -8,11 +8,10 @@
 
 The search for life beyond Earth depends on the molecular signatures it leaves
 behind in the atmospheres of its host planet. Correctly interpreting these
-signatures requires understanding the climates of potential host planets. **ThousandWorlds** is a
-benchmark for emulating these exoplanet climates: **1760 simulations**
-across 5 GCMs, 8 planet parameters, and atmospheric variables on a 32 x 64 x 10
-latitude-longitude-pressure grid. It includes three nested benchmark subsets,
-two evaluation protocols, and eight released baseline methods.
+signatures requires understanding the climates of potential host planets. 
+
+**ThousandWorlds** is a benchmark for emulating these exoplanet climates: 
+**1760 simulations** across 5 GCMs, 8 planet parameters, and atmospheric variables on a 32 x 64 x 10 latitude-longitude-pressure grid. It includes three nested benchmark subsets, two evaluation protocols, and eight released baseline methods.
 
 Data: https://doi.org/10.57967/hf/8695
 <br>
