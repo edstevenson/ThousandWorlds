@@ -1,6 +1,6 @@
 # ThousandWorlds
 
-<img src="imgs/MASCOT.png" align="right" width="220" alt="ThousandWorlds mascot">
+<img src="imgs/MASCOT.png" align="right" width="210" alt="ThousandWorlds mascot">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Dataset DOI](https://img.shields.io/badge/dataset-10.57967%2Fhf%2F8695-yellow.svg)](https://doi.org/10.57967/hf/8695)
@@ -13,7 +13,7 @@ signatures requires understanding the climates of potential host planets.
 **ThousandWorlds** is a benchmark for emulating these exoplanet climates: 
 **1760 simulations** across 5 GCMs, 8 planet parameters, and atmospheric variables on a 32 x 64 x 10 latitude-longitude-pressure grid. It includes three nested benchmark subsets, two evaluation protocols, and eight released baseline methods.
 
-Data: https://doi.org/10.57967/hf/8695
+Dataset: https://doi.org/10.57967/hf/8695
 <br>
 
 ![ThousandWorlds dataset schematic](imgs/OVERVIEW.png)
