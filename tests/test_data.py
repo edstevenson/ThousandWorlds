@@ -28,35 +28,46 @@ def test_load_complete_obs_spectral(data_dir):
     assert bundle.field_mask_test.all()
 
 
-def test_download_dataset_uses_default_url_and_filename(monkeypatch, tmp_path):
+def test_download_dataset_dispatches_dataset_archive(monkeypatch, tmp_path):
     calls = {}
 
-    def fake_download(url: str, dest_dir: str | Path, *, force: bool = False, archive_name: str | None = None) -> Path:
-        calls.update(url=url, dest_dir=Path(dest_dir), force=force, archive_name=archive_name)
-        return Path(dest_dir) / archive_name
+    def fake_archive(name: str, dest_dir: str | Path, *, force: bool = False, **kwargs) -> Path:
+        calls.update(name=name, dest_dir=Path(dest_dir), force=force)
+        return Path(dest_dir) / name
 
-    monkeypatch.delenv("THOUSANDWORLDS_DATA_URL", raising=False)
-    monkeypatch.setattr(tw.data, "download", fake_download)
+    monkeypatch.setattr(tw.data, "_download_archive", fake_archive)
     out = tw.download_dataset(tmp_path, force=True)
 
-    assert out == tmp_path / "dataset.tar.gz"
-    assert calls == {"url": tw.data.DATA_URL, "dest_dir": tmp_path, "force": True, "archive_name": "dataset.tar.gz"}
+    assert out == tmp_path / "dataset"
+    assert calls == {"name": "dataset.tar.gz", "dest_dir": tmp_path, "force": True}
 
 
-def test_download_dataset_downloads_when_only_lightweight_dataset_scaffold_exists(monkeypatch, tmp_path):
+def test_download_dataset_defaults_to_package_data_root(monkeypatch):
     calls = {}
-    data_root = tmp_path / "dataset"
-    (data_root / "subsets").mkdir(parents=True)
-    (data_root / "fields").mkdir()
-    (data_root / "inputs.csv").write_text("simulation_id\n", encoding="utf-8")
 
-    def fake_download(url: str, dest_dir: str | Path, *, force: bool = False, archive_name: str | None = None) -> Path:
-        calls.update(url=url, dest_dir=Path(dest_dir), force=force, archive_name=archive_name)
-        return Path(dest_dir) / archive_name
+    def fake_archive(name: str, dest_dir: str | Path, *, force: bool = False, **kwargs) -> Path:
+        calls.update(name=name, dest_dir=Path(dest_dir))
+        return Path(dest_dir) / "dataset"
 
-    monkeypatch.setattr(tw.data, "download", fake_download)
-    assert tw.download_dataset(tmp_path) == tmp_path / "dataset.tar.gz"
-    assert calls["archive_name"] == "dataset.tar.gz"
+    monkeypatch.setattr(tw.data, "_download_archive", fake_archive)
+    out = tw.download_dataset(force=True)  # force bypasses the present-dataset skip
+
+    assert out == tw.schema.DEFAULT_DATA_ROOT
+    assert calls == {"name": "dataset.tar.gz", "dest_dir": tw.schema.DEFAULT_DATA_ROOT.parent}
+
+
+def test_download_dataset_downloads_when_only_one_field_archive_exists(monkeypatch, tmp_path):
+    calls = {}
+    (tmp_path / "dataset" / "fields").mkdir(parents=True)
+    (tmp_path / "dataset" / "fields" / "complete-obs-only.npz").write_bytes(b"npz")
+
+    def fake_archive(name: str, dest_dir: str | Path, *, force: bool = False, **kwargs) -> Path:
+        calls.update(name=name)
+        return Path(dest_dir) / name
+
+    monkeypatch.setattr(tw.data, "_download_archive", fake_archive)
+    assert tw.download_dataset(tmp_path) == tmp_path / "dataset"
+    assert calls["name"] == "dataset.tar.gz"
 
 
 def test_download_dataset_skips_existing_extracted_archive(monkeypatch, tmp_path):
@@ -65,116 +76,81 @@ def test_download_dataset_skips_existing_extracted_archive(monkeypatch, tmp_path
     (data_root / "fields" / "all-obs.npz").write_bytes(b"npz")
     (data_root / "fields" / "complete-obs-only.npz").write_bytes(b"npz")
 
-    def fail_download(*args, **kwargs):
-        raise AssertionError("download should not be called")
+    def fail_archive(*args, **kwargs):
+        raise AssertionError("_download_archive should not be called")
 
-    monkeypatch.setattr(tw.data, "download", fail_download)
+    monkeypatch.setattr(tw.data, "_download_archive", fail_archive)
     assert tw.download_dataset(tmp_path) == data_root
 
 
-def test_download_dataset_downloads_when_only_one_field_archive_exists(monkeypatch, tmp_path):
-    calls = {}
-    data_root = tmp_path / "dataset"
-    (data_root / "fields").mkdir(parents=True)
-    (data_root / "fields" / "complete-obs-only.npz").write_bytes(b"npz")
-
-    def fake_download(url: str, dest_dir: str | Path, *, force: bool = False, archive_name: str | None = None) -> Path:
-        calls.update(url=url, dest_dir=Path(dest_dir), force=force, archive_name=archive_name)
-        return Path(dest_dir) / archive_name
-
-    monkeypatch.setattr(tw.data, "download", fake_download)
-    assert tw.download_dataset(tmp_path) == tmp_path / "dataset.tar.gz"
-    assert calls["archive_name"] == "dataset.tar.gz"
-
-
-def test_download_dataset_uses_envvar(monkeypatch, tmp_path):
-    calls = {}
-
-    def fake_download(url: str, dest_dir: str | Path, *, force: bool = False, archive_name: str | None = None) -> Path:
-        calls.update(url=url, dest_dir=Path(dest_dir), force=force, archive_name=archive_name)
-        return Path(dest_dir) / Path(url).name
-
-    monkeypatch.setenv("THOUSANDWORLDS_DATA_URL", "https://example.org/tw.tar.gz")
-    monkeypatch.setattr(tw.data, "download", fake_download)
-    out = tw.download_dataset(tmp_path, force=True)
-
-    assert out == tmp_path / "tw.tar.gz"
-    assert calls == {"url": "https://example.org/tw.tar.gz", "dest_dir": tmp_path, "force": True, "archive_name": None}
-
-
-def test_download_baselines_uses_default_urls(monkeypatch, tmp_path):
+def test_download_baselines_dispatches_each_archive(monkeypatch, tmp_path):
     calls = []
 
-    def fake_download(
-        url: str,
+    def fake_archive(
+        name: str,
         dest_dir: str | Path,
         *,
         force: bool = False,
-        archive_name: str | None = None,
         protected_existing_names: frozenset[str] = frozenset(),
         skip_existing_members: tuple[str, ...] = (),
     ) -> Path:
-        calls.append((url, Path(dest_dir), force, archive_name, protected_existing_names, skip_existing_members))
-        return Path(dest_dir) / archive_name
+        calls.append((name, Path(dest_dir), force, protected_existing_names, skip_existing_members))
+        return Path(dest_dir) / name
 
-    monkeypatch.delenv("THOUSANDWORLDS_BASELINES_URLS", raising=False)
-    monkeypatch.setattr(tw.data, "download", fake_download)
+    monkeypatch.setattr(tw.data, "_download_archive", fake_archive)
     out = tw.download_baselines(tmp_path, force=True)
 
     assert out == [tmp_path / name for name in tw.data.BASELINES_RESULTS_ARCHIVES]
     assert calls == [
         (
-            url,
+            name,
             tmp_path,
             True,
-            name,
             frozenset({"predictions.npz"}),
             ("results/README.md", "results/scores.csv", "results/tables"),
         )
-        for url, name in zip(tw.data.BASELINES_URLS, tw.data.BASELINES_RESULTS_ARCHIVES)
+        for name in tw.data.BASELINES_RESULTS_ARCHIVES
     ]
 
 
-def test_download_baselines_uses_envvar(monkeypatch, tmp_path):
-    calls = {}
+def test_download_baselines_accepts_archive_subset(monkeypatch, tmp_path):
+    names = ("results-baselines-single-complete-deterministic.tar.gz",)
+    monkeypatch.setattr(tw.data, "_download_archive", lambda name, dest_dir, **kwargs: Path(dest_dir) / name)
+    assert tw.download_baselines(tmp_path, archives=names) == [tmp_path / names[0]]
 
-    def fake_download(
-        url: str,
-        dest_dir: str | Path,
-        *,
-        force: bool = False,
-        archive_name: str | None = None,
-        protected_existing_names: frozenset[str] = frozenset(),
-        skip_existing_members: tuple[str, ...] = (),
-    ) -> Path:
-        calls.update(
-            url=url,
-            dest_dir=Path(dest_dir),
-            force=force,
-            archive_name=archive_name,
-            protected_existing_names=protected_existing_names,
-            skip_existing_members=skip_existing_members,
-        )
-        return Path(dest_dir) / Path(url).name
 
-    monkeypatch.setenv(
-        "THOUSANDWORLDS_BASELINES_URLS",
-        "https://example.org/results-baselines-a.tar.gz,https://example.org/results-baselines-b.tar.gz",
+def test_download_baselines_defaults_to_package_root(monkeypatch):
+    dests = []
+    monkeypatch.setattr(
+        tw.data, "_download_archive", lambda name, dest_dir, **kwargs: dests.append(Path(dest_dir)) or Path(dest_dir) / name
     )
-    monkeypatch.setattr(tw.data, "download", fake_download)
-    out = tw.download_baselines(tmp_path, force=True)
+    tw.download_baselines(archives=("results-baselines-single-complete-deterministic.tar.gz",))
+    assert dests == [tw.schema.PROJECT_ROOT]
 
-    assert out == [
-        tmp_path / "results-baselines-a.tar.gz",
-        tmp_path / "results-baselines-b.tar.gz",
-    ]
-    assert calls == {
-        "url": "https://example.org/results-baselines-b.tar.gz",
-        "dest_dir": tmp_path,
-        "force": True,
-        "archive_name": None,
-        "protected_existing_names": frozenset({"predictions.npz"}),
-        "skip_existing_members": ("results/README.md", "results/scores.csv", "results/tables"),
+
+def test_download_archive_fetches_from_hub_and_extracts(monkeypatch, tmp_path):
+    payload = tmp_path / "payload.bin"
+    payload.write_bytes(b"npz")
+    archive = tmp_path / "dataset.tar.gz"
+    with tarfile.open(archive, "w:gz") as tar:
+        tar.add(payload, arcname="dataset/fields/all-obs.npz")
+
+    seen = {}
+
+    def fake_hub(*, repo_id: str, repo_type: str, revision: str, filename: str) -> str:
+        seen.update(repo_id=repo_id, repo_type=repo_type, revision=revision, filename=filename)
+        return str(archive)
+
+    monkeypatch.setattr(tw.data, "hf_hub_download", fake_hub)
+    dest = tmp_path / "out"
+    tw.data._download_archive("dataset.tar.gz", dest)
+
+    assert (dest / "dataset" / "fields" / "all-obs.npz").read_bytes() == b"npz"
+    assert seen == {
+        "repo_id": tw.data.HF_REPO_ID,
+        "repo_type": "dataset",
+        "revision": tw.data.HF_REVISION,
+        "filename": "archives/dataset.tar.gz",
     }
 
 

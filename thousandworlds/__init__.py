@@ -1,14 +1,11 @@
-from . import data, evaluate, preprocessing, schema, spectral
+from . import data, evaluate, preprocessing, schema, spectral, viz
 from .evaluate import score, score_predictions
 from .data import (
     BASELINES_RESULTS_ARCHIVES,
-    BASELINES_URLS,
-    BASELINES_URLS_ENVVAR,
     DATASET_PAGE_URL,
-    DATA_URL,
-    DATA_URL_ENVVAR,
+    HF_REPO_ID,
+    HF_REVISION,
     DataBundle,
-    download,
     download_baselines,
     download_dataset,
     load,

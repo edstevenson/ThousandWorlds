@@ -97,7 +97,7 @@ class PCAMLP:
         val_s: torch.Tensor | None = None,
         val_Y: torch.Tensor | None = None,
         val_field_mask: torch.Tensor | None = None,
-        log_every: int = 20,
+        log_every: int = 100,
         early_stop_metric: str = "norm_srmse_val_1e3",
         early_stop_patience_evals: int | None = None,
         early_stop_min_delta: float = 0.0,

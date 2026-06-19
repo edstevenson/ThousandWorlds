@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use ThousandWorlds, please cite the paper below."
+title: "ThousandWorlds: A benchmark for climate emulation of potentially habitable exoplanets"
+authors:
+  - given-names: "Edward T."
+    family-names: Stevenson
+  - given-names: "Mei Ting"
+    family-names: Mak
+  - given-names: Eric
+    family-names: Wolf
+  - given-names: "Denis E."
+    family-names: Sergeev
+  - given-names: Tobi
+    family-names: Hammond
+  - given-names: "N. J."
+    family-names: Mayne
+  - given-names: Miles
+    family-names: Cranmer
+preferred-citation:
+  type: article
+  title: "ThousandWorlds: A benchmark for climate emulation of potentially habitable exoplanets"
+  authors:
+    - given-names: "Edward T."
+      family-names: Stevenson
+    - given-names: "Mei Ting"
+      family-names: Mak
+    - given-names: Eric
+      family-names: Wolf
+    - given-names: "Denis E."
+      family-names: Sergeev
+    - given-names: Tobi
+      family-names: Hammond
+    - given-names: "N. J."
+      family-names: Mayne
+    - given-names: Miles
+      family-names: Cranmer
+  year: 2026
+  doi: "10.48550/arXiv.2606.18338"
+  url: "https://arxiv.org/abs/2606.18338"

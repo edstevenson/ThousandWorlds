@@ -4,6 +4,10 @@ from pathlib import Path
 
 from .field_spec import FIELDS_ALL_OBS, FIELDS_COMPLETE_OBS_ONLY
 
+_PACKAGE_DIR = Path(__file__).resolve().parent  # .../thousandworlds (the package)
+PROJECT_ROOT = _PACKAGE_DIR.parent  # the checkout root, where the dataset/ scaffold lives
+DEFAULT_DATA_ROOT = PROJECT_ROOT / "dataset"
+
 GRID_SHAPE = (32, 64)
 T = 21
 N_COEFFS = 484
@@ -46,13 +50,12 @@ def _looks_like_data_root(path: Path) -> bool:
 
 def resolve_data_root(data_dir: str | Path) -> Path:
     path = Path(data_dir)
-    pkg_root = Path(__file__).resolve().parents[1]
-    for candidate in (path, path / "dataset", pkg_root / path, pkg_root / path / "dataset"):
+    for candidate in (path, path / "dataset", PROJECT_ROOT / path, PROJECT_ROOT / path / "dataset"):
         if _looks_like_data_root(candidate):
             return candidate
     raise FileNotFoundError(
         f"Could not find ThousandWorlds dataset root from {path!s}. "
-        f"Tried: {path}, {path / 'dataset'}, {pkg_root / path}, {pkg_root / path / 'dataset'}. "
+        f"Tried: {path}, {path / 'dataset'}, {PROJECT_ROOT / path}, {PROJECT_ROOT / path / 'dataset'}. "
         f"Download the dataset first or call thousandworlds.download_dataset(...)."
     )
 

@@ -1,18 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import os
 from pathlib import Path
-import hashlib
 import tarfile
-import time
 
 import numpy as np
 import pandas as pd
-import requests
+from huggingface_hub import hf_hub_download
 
 from .field_spec import CANONICAL_INPUT_NAMES, public_field_names
 from .schema import (
+    DEFAULT_DATA_ROOT,
+    PROJECT_ROOT,
     SUBSET_TO_FIELDS,
     resolve_data_root,
     subset_path,
@@ -30,10 +29,9 @@ CSV_TO_INPUT = {
     "CH4": "ch4",
 }
 DATASET_PAGE_URL = "https://doi.org/10.57967/hf/8695"
-DATA_URL_ENVVAR = "THOUSANDWORLDS_DATA_URL"
-HF_ARCHIVE_ROOT = "https://huggingface.co/datasets/es833/ThousandWorlds/resolve/v1.0.0/archives"
-DATA_URL = f"{HF_ARCHIVE_ROOT}/dataset.tar.gz"
-BASELINES_URLS_ENVVAR = "THOUSANDWORLDS_BASELINES_URLS"
+HF_REPO_ID = "es833/ThousandWorlds"
+HF_REVISION = "v1.0.0"
+DATASET_ARCHIVE = "dataset.tar.gz"
 BASELINES_RESULTS_ARCHIVES = (
     "results-baselines-multi-partial-deterministic.tar.gz",
     "results-baselines-multi-complete-deterministic.tar.gz",
@@ -45,29 +43,6 @@ BASELINES_RESULTS_ARCHIVES = (
     "results-baselines-single-complete-gplfr.tar.gz",
     "results-baselines-single-complete-ppca_icm.tar.gz",
 )
-BASELINES_URLS = (
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-deterministic.tar.gz",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-deterministic.tar.gz",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-deterministic.tar.gz",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-gplfr.tar.gz",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-ppca_icm.tar.gz",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-gplfr.tar.gz",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-ppca_icm.tar.gz",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-gplfr.tar.gz",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-ppca_icm.tar.gz",
-)
-KNOWN_SHA256 = {
-    f"{HF_ARCHIVE_ROOT}/dataset.tar.gz": "356c6cc14f6d23f6ffaef2155bfb668f6e365e07bb5b2f83736afa5343dae8b3",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-deterministic.tar.gz": "59f9979ed6c31fba1f43163485ba821e8cc486e1ca1893148528568b3a00b5ab",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-deterministic.tar.gz": "204c492fd2af1b921946b1a9de07e39e8581c4f18cb01490b123bebf74cbc789",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-deterministic.tar.gz": "9725c008210b7c6bd5094a7707da0c305629fc36e9d533876ea85edde492ff9d",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-gplfr.tar.gz": "add9bcd8ba3761200ac89d013e259ebafeeb221b71043d062609ab3708ae2613",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-partial-ppca_icm.tar.gz": "5d65fabd3662ce5da4aa0f3d1480285e633e6e1819e8c1a3e0f128b0017ae30a",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-gplfr.tar.gz": "099018b9bb4c98fbc479889bd3a977fa249e0602fa8d7cd57f7a3ac78d42d356",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-multi-complete-ppca_icm.tar.gz": "c3578059971aae6d3323b52dab27ad6f8133dcff7fefb8d79074a737200c21e3",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-gplfr.tar.gz": "cf5a54f053836e0cd6758fa24c64d9d51ee1130c39831522dea12e8a59529a15",
-    f"{HF_ARCHIVE_ROOT}/results-baselines-single-complete-ppca_icm.tar.gz": "380331557807129ce722cc0884ec2518b7b334733fefc88e5e5797a1361860b5",
-}
 
 
 @dataclass
@@ -102,8 +77,7 @@ def _load_archive(data_root: Path, subset: str, space: str) -> tuple[np.ndarray,
     if not path.is_file():
         raise FileNotFoundError(
             f"Missing benchmark archive {path}. "
-            f"Place the extracted dataset under {data_root}, call thousandworlds.download_dataset(...), "
-            f"or set {DATA_URL_ENVVAR} to another dataset archive URL."
+            f"Place the extracted dataset under {data_root} or call thousandworlds.download_dataset(...)."
         )
     key = "fields" if space == "grid" else "coefficients"
     with np.load(path, allow_pickle=False) as npz:
@@ -186,22 +160,6 @@ def load(
     )
 
 
-def _maybe_sha256(url: str) -> str | None:
-    for candidate in (f"{url}.sha256", f"{url}.sha256sum"):
-        resp = requests.get(candidate, timeout=30)
-        if resp.ok and resp.text.strip():
-            return resp.text.strip().split()[0]
-    return None
-
-
-def _format_bytes(n: int) -> str:
-    for unit in ("B", "KB", "MB", "GB"):
-        if n < 1024 or unit == "GB":
-            return f"{n:.1f} {unit}" if unit != "B" else f"{n} B"
-        n /= 1024
-    return f"{n:.1f} GB"
-
-
 def _checked_tar_members(tar: tarfile.TarFile, dest_dir: Path) -> list[tarfile.TarInfo]:
     dest_root = dest_dir.resolve()
     members = tar.getmembers()
@@ -253,104 +211,57 @@ def _extract_tar(
         tar.extractall(dest_dir, members=members)
 
 
-def download(
-    url: str,
+def _download_archive(
+    filename: str,
     dest_dir: str | Path,
     *,
     force: bool = False,
-    archive_name: str | None = None,
     protected_existing_names: frozenset[str] = frozenset(),
     skip_existing_members: tuple[str, ...] = (),
 ) -> Path:
     dest_dir = Path(dest_dir)
     dest_dir.mkdir(parents=True, exist_ok=True)
-    archive_path = dest_dir / (archive_name or Path(url).name)
-    if archive_path.exists() and not force:
-        return archive_path
-
-    checksum = KNOWN_SHA256.get(url) or _maybe_sha256(url)
-    with requests.get(url, stream=True, timeout=60) as resp:
-        resp.raise_for_status()
-        total = int(resp.headers.get("content-length", 0))
-        print(f"Downloading {archive_path.name}" + (f" ({_format_bytes(total)})" if total else "") + "...", flush=True)
-        digest = hashlib.sha256()
-        downloaded = 0
-        last_update = 0.0
-        with archive_path.open("wb") as fh:
-            for chunk in resp.iter_content(chunk_size=1 << 20):
-                if not chunk:
-                    continue
-                fh.write(chunk)
-                digest.update(chunk)
-                downloaded += len(chunk)
-                now = time.monotonic()
-                if now - last_update >= 1.0:
-                    if total:
-                        print(f"  {downloaded / total:5.1%} ({_format_bytes(downloaded)} / {_format_bytes(total)})", flush=True)
-                    else:
-                        print(f"  {_format_bytes(downloaded)}", flush=True)
-                    last_update = now
-        print(f"Downloaded {archive_path.name} ({_format_bytes(downloaded)}).", flush=True)
-    if checksum and digest.hexdigest() != checksum:
-        raise ValueError(f"SHA256 mismatch for {archive_path.name}.")
-    if tarfile.is_tarfile(archive_path):
-        print(f"Extracting {archive_path.name}...", flush=True)
-        _extract_tar(
-            archive_path,
-            dest_dir,
-            force=force,
-            protected_existing_names=protected_existing_names,
-            skip_existing_members=skip_existing_members,
-        )
-        print(f"Extracted {archive_path.name}.", flush=True)
+    archive_path = Path(
+        hf_hub_download(repo_id=HF_REPO_ID, repo_type="dataset", revision=HF_REVISION, filename=f"archives/{filename}")
+    )
+    print(f"Extracting {filename}...", flush=True)
+    _extract_tar(
+        archive_path,
+        dest_dir,
+        force=force,
+        protected_existing_names=protected_existing_names,
+        skip_existing_members=skip_existing_members,
+    )
     return archive_path
 
 
-def download_dataset(dest_dir: str | Path, *, url: str | None = None, force: bool = False) -> Path:
-    dest_dir = Path(dest_dir)
-    data_root = dest_dir / "dataset"
-    if all((data_root / "fields" / name).is_file() for name in ("all-obs.npz", "complete-obs-only.npz")) and not force:
+def download_dataset(dest_dir: str | Path | None = None, *, force: bool = False) -> Path:
+    """Fetch the benchmark dataset, defaulting to ``<package>/dataset`` regardless of cwd."""
+    data_root = DEFAULT_DATA_ROOT if dest_dir is None else Path(dest_dir) / "dataset"
+    present = all((data_root / "fields" / name).is_file() for name in ("all-obs.npz", "complete-obs-only.npz"))
+    if present and not force:
+        print(f"Dataset already present at `{data_root.resolve()}/`, skipping download.", flush=True)
         return data_root
-    url = url or os.environ.get(DATA_URL_ENVVAR) or DATA_URL
-    if url is None:
-        raise RuntimeError(
-            f"No default ThousandWorlds dataset archive URL is configured yet. "
-            f"Set {DATA_URL_ENVVAR}, pass url=..., or download manually from {DATASET_PAGE_URL}."
-        )
-    return download(url, dest_dir, force=force, archive_name="dataset.tar.gz" if url == DATA_URL else None)
-
-
-def _split_urls(value: str) -> tuple[str, ...]:
-    return tuple(part.strip() for part in value.replace("\n", ",").split(",") if part.strip())
+    print(f"Downloading dataset to `{data_root.resolve()}/`...", flush=True)
+    _download_archive(DATASET_ARCHIVE, data_root.parent, force=force)
+    return data_root
 
 
 def download_baselines(
-    dest_dir: str | Path,
+    dest_dir: str | Path | None = None,
     *,
-    url: str | None = None,
-    urls: tuple[str, ...] | list[str] | None = None,
+    archives: tuple[str, ...] | list[str] | None = None,
     force: bool = False,
 ) -> list[Path]:
-    baseline_urls = tuple(urls or ())
-    if url is not None:
-        baseline_urls = (url,)
-    if not baseline_urls:
-        env_urls = os.environ.get(BASELINES_URLS_ENVVAR)
-        baseline_urls = _split_urls(env_urls) if env_urls else tuple(BASELINES_URLS or ())
-    if not baseline_urls:
-        raise RuntimeError(
-            f"No default ThousandWorlds baseline-results archive URLs are configured yet. "
-            f"Set {BASELINES_URLS_ENVVAR}, pass urls=..., or download manually from {DATASET_PAGE_URL}."
-        )
-    archive_names = BASELINES_RESULTS_ARCHIVES if baseline_urls == BASELINES_URLS else (None,) * len(baseline_urls)
+    """Fetch baseline results, defaulting beside the package (``<package>/results``) regardless of cwd."""
+    dest_dir = PROJECT_ROOT if dest_dir is None else dest_dir
     return [
-        download(
-            baseline_url,
+        _download_archive(
+            name,
             dest_dir,
             force=force,
-            archive_name=archive_name,
             protected_existing_names=frozenset({"predictions.npz"}),
             skip_existing_members=("results/README.md", "results/scores.csv", "results/tables"),
         )
-        for baseline_url, archive_name in zip(baseline_urls, archive_names)
+        for name in (archives or BASELINES_RESULTS_ARCHIVES)
     ]
