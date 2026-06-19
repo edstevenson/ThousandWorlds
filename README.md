@@ -7,13 +7,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2606.18338-b31b1b.svg)](https://arxiv.org/abs/2606.18338)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 
-The search for life beyond Earth depends on the molecular signatures it leaves
-behind in the atmospheres of its host planet. Correctly interpreting these
-signatures requires understanding the climates of potential host planets. **ThousandWorlds** is a
-benchmark for emulating these exoplanet climates: **1760 simulations**
-across 5 GCMs, 8 planet parameters, and atmospheric variables on a 32 x 64 x 10
-latitude-longitude-pressure grid. It includes three nested benchmark subsets,
-two evaluation protocols, and eight released baseline methods.
+The search for life beyond Earth depends on the molecular signatures it leaves behind in the atmospheres of its host planet. Correctly interpreting these signatures requires understanding the climates of potential host planets. **ThousandWorlds** is a benchmark for emulating these exoplanet climates: **1760 simulations** across 5 GCMs, 8 planet parameters, and atmospheric variables on a 32 x 64 x 10 latitude-longitude-pressure grid. It includes three nested benchmark subsets, two evaluation protocols, and eight released baseline methods.
 
 <br>
 
@@ -71,16 +65,17 @@ python -c "import thousandworlds as tw; tw.download_baselines()"
 ```
 
 To run baselines yourself:
+
 ```bash
 python -m thousandworlds.run_model train_mean single-complete
 python -m thousandworlds.run_model --config results/models/multi-partial/pca_mlp/config.json
 ```
+
 The first form runs a method on a subset with default hyperparameters (override
 with flags); the second reproduces a published baseline from its checked-in
 `config.json`. Each run writes predictions, metrics, and the resolved config to
 `results/models/<subset>/<method>/`, overwriting the checked-in results by default
-(use `--out-dir` to redirect). The same run is callable from Python:
-`thousandworlds.run_model.run(method, subset, ...)` returns the predictions and metrics as a dict instead of writing to disk.
+(use `--out-dir` to redirect).
 
 See [`notebooks/pca_mlp.ipynb`](notebooks/pca_mlp.ipynb) for a quick example that
 trains a baseline in-notebook and compares its predictions to the targets.
@@ -118,3 +113,4 @@ If you use ThousandWorlds, please cite the paper:
   doi = {10.48550/arXiv.2606.18338}
 }
 ```
+
