@@ -40,6 +40,7 @@ nested benchmark subsets, two evaluation protocols, and eight released baseline
 methods.
 
 [![Code](https://img.shields.io/badge/code-GitHub-181717.svg?logo=github)](https://github.com/edstevenson/ThousandWorlds)
+[![arXiv](https://img.shields.io/badge/arXiv-2606.18338-b31b1b.svg)](https://arxiv.org/abs/2606.18338)
 
 Inputs are 8 continuous planet parameters plus the source GCM label. Outputs
 are time-averaged climate fields on a 32 x 64 latitude-longitude grid:
@@ -60,19 +61,14 @@ pip install -e .
 ```
 
 ```python
-import numpy as np
 import thousandworlds as tw
 
-tw.download_dataset(".")
+tw.download_dataset()
 bundle = tw.load("single-complete", data_dir="dataset")
-
-pred = np.broadcast_to(bundle.Y_train.mean(axis=0), bundle.Y_test.shape)
-scores = tw.evaluate.rmse(pred, bundle.Y_test, bundle.field_mask_test, bundle.field_names)
-scores["per_variable"]
 ```
 
-See the GitHub repository for notebooks, baseline code, evaluation utilities,
-and reproducing paper results.
+See the GitHub repository for the full quickstart, notebooks, baseline code,
+evaluation utilities, and reproducing paper results.
 
 ## Files
 
