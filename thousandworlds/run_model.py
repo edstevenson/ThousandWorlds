@@ -28,6 +28,7 @@ from ._run_model_config import (
     COORD_DEEPONET_PRESETS,
     COORD_MLP_ARG_DEFAULTS,
     COORD_MLP_PRESETS,
+    PCA_GBT_LINEAR_TREND_CFG,
     PCA_MLP_ARG_DEFAULTS,
     PCA_MLP_LINEAR_TREND_CFG,
     PCA_RIDGE_DESIGN_CFG,
@@ -37,6 +38,7 @@ from ._run_model_config import (
     _coord_mlp_hparams,
     _gplfr_hparams,
     _merge_config_args,
+    _pca_gbt_hparams,
     _pca_mlp_hparams,
     _pca_ridge_hparams,
     _ppca_icm_hparams,
@@ -81,6 +83,12 @@ def run(
         best_lambda_reg=None,
         hidden_width=128,
         activation="silu",
+        gbt_tree_backend="hgbt",
+        gbt_learning_rate=0.05,
+        gbt_max_iter=600,
+        gbt_max_leaf_nodes=31,
+        gbt_min_samples_leaf=10,
+        gbt_l2=1.0,
         ppca_iters=50,
         num_steps=3000,
         lr=1.0e-3,
@@ -401,6 +409,43 @@ def _run_pca_mlp(args: argparse.Namespace) -> dict:
     return {"data": data, "predictions": predictions, "meta": {"method": "pca_mlp", "mlp_fit": model.mlp_fit_stats_}}
 
 
+def _run_pca_gbt(args: argparse.Namespace) -> dict:
+    from thousandworlds.models.pca_gbt import PCAGBT
+
+    torch = _torch()
+    data = prepare_tw_data(args.subset, data_dir=args.data_dir)
+    hp = _pca_gbt_hparams(args, getattr(args, "_config", None))
+    Y_train = np.transpose(tw.normalise_spectral(data.spectral_bundle.Y_train, data.spectral_bundle.raw_field_names, data.stats), (0, 2, 1))
+    model = PCAGBT(
+        latent_dim=int(hp["latent_dim"]),
+        tree_backend=str(hp["gbt_tree_backend"]),
+        learning_rate=float(hp["gbt_learning_rate"]),
+        max_iter=int(hp["gbt_max_iter"]),
+        max_leaf_nodes=int(hp["gbt_max_leaf_nodes"]),
+        min_samples_leaf=int(hp["gbt_min_samples_leaf"]),
+        l2_regularization=float(hp["gbt_l2"]),
+        early_stopping=True,
+        dtype=getattr(torch, args.dtype),
+        device=args.device,
+    )
+    model.fit(
+        torch.from_numpy(data.X_train_std),
+        torch.from_numpy(data.s_train.copy()),
+        torch.from_numpy(Y_train),
+        field_mask=torch.from_numpy(data.spectral_bundle.field_mask_train),
+        sh_mask=torch.from_numpy(data.sh_mask),
+        linear_trend_cfg=PCA_GBT_LINEAR_TREND_CFG,
+        field_names=data.spectral_bundle.raw_field_names,
+        ppca_iters=int(args.ppca_iters),
+        seed=args.seed,
+        n_sim_types=len(data.gcm_labels),
+    )
+    pred_coeffs = model.predict(torch.from_numpy(data.X_test_std), torch.from_numpy(data.s_test.copy())).detach().cpu().numpy().transpose(0, 2, 1)
+    pred_avg = decode_spectral_predictions(pred_coeffs, data.spectral_bundle.raw_field_names, data.stats, sh_mask=data.sh_mask, inverse_sht=data.inverse_sht)
+    predictions = inverse_average_space_grid(pred_avg, data.spectral_bundle.raw_field_names, data.stats, X=data.grid_bundle.X_test)[None]
+    return {"data": data, "predictions": predictions, "meta": {"method": "pca_gbt", "gbt_fit": model.gbt_fit_stats_}}
+
+
 def _run_coord_mlp(args: argparse.Namespace) -> dict:
     from thousandworlds.models.coord_mlp import CoordMLP
 
@@ -611,6 +656,7 @@ def _run_method(args: argparse.Namespace) -> dict:
         "knn": _run_knn,
         "pca_ridge": _run_pca_ridge,
         "pca_mlp": _run_pca_mlp,
+        "pca_gbt": _run_pca_gbt,
         "coord_mlp": _run_coord_mlp,
         "coord_deeponet": _run_coord_deeponet,
         "ppca_icm": _run_ppca_icm,
@@ -620,7 +666,7 @@ def _run_method(args: argparse.Namespace) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="python -m thousandworlds.run_model", description="Run extracted ThousandWorlds models.")
-    parser.add_argument("method", nargs="?", choices=["train_mean", "knn", "pca_ridge", "pca_mlp", "ppca_icm", "gplfr", "coord_mlp", "coord_deeponet"])
+    parser.add_argument("method", nargs="?", choices=["train_mean", "knn", "pca_ridge", "pca_mlp", "pca_gbt", "ppca_icm", "gplfr", "coord_mlp", "coord_deeponet"])
     parser.add_argument("subset", nargs="?")
     # ---- Shared / general arguments ----
     parser.add_argument("--config", type=Path, default=None, help="Resolved config.json written by a previous run")
@@ -651,6 +697,14 @@ def main() -> None:
     parser.add_argument("--lr", type=float, default=1.0e-3, help="PCA-MLP: Learning rate")
     parser.add_argument("--weight-decay", type=float, default=1.0e-3, help="PCA-MLP: Weight decay for MLP")
     parser.add_argument("--hard-stop-step", type=int, default=None, help="PCA-MLP: Optional hard stop step")
+
+    # ---- PCA-GBT arguments ----
+    parser.add_argument("--gbt-tree-backend", choices=["hgbt", "extra_trees", "rf"], default="hgbt", help="PCA-GBT: latent-score tree backend")
+    parser.add_argument("--gbt-learning-rate", type=float, default=0.05, help="PCA-GBT: gradient-boosting learning rate")
+    parser.add_argument("--gbt-max-iter", type=int, default=600, help="PCA-GBT: max boosting iterations (early stopping caps actual)")
+    parser.add_argument("--gbt-max-leaf-nodes", type=int, default=31, help="PCA-GBT: max leaves per tree")
+    parser.add_argument("--gbt-min-samples-leaf", type=int, default=10, help="PCA-GBT: min samples per leaf")
+    parser.add_argument("--gbt-l2", type=float, default=1.0, help="PCA-GBT: L2 regularization")
 
     # ---- Coord-MLP arguments ----
     parser.add_argument("--coord-hidden-width", type=int, default=256, help="Coord-MLP: Hidden width")

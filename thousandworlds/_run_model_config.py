@@ -23,6 +23,20 @@ PCA_MLP_PRESETS = {
 }
 PCA_MLP_LINEAR_TREND_CFG = {"enabled": True, "lambda": 1.0e-3, "design": {"intercept": True, "inputs": True, "sim_onehot": False}}
 
+PCA_GBT_ARG_DEFAULTS = {
+    "latent_dim": 150,
+    "gbt_tree_backend": "hgbt",
+    "gbt_learning_rate": 0.05,
+    "gbt_max_iter": 600,
+    "gbt_max_leaf_nodes": 31,
+    "gbt_min_samples_leaf": 10,
+    "gbt_l2": 1.0,
+}
+# Off-the-shelf gradient boosting with early stopping: iterations auto-adapt to
+# each subset's size, so a single fixed config is used for every subset (no
+# per-subset, test-tuned presets).
+PCA_GBT_LINEAR_TREND_CFG = {"enabled": True, "lambda": 1.0e-3, "design": {"intercept": True, "inputs": True, "sim_onehot": False}}
+
 PCA_RIDGE_ARG_DEFAULTS = {
     "latent_dim": 50,
     "lambda_reg": 1.0e-3,
@@ -167,6 +181,20 @@ def _pca_mlp_hparams(args: argparse.Namespace, cfg: dict | None = None) -> dict[
     values = {key: getattr(args, key) for key in PCA_MLP_ARG_DEFAULTS}
     if values == PCA_MLP_ARG_DEFAULTS and args.subset in PCA_MLP_PRESETS:
         return dict(PCA_MLP_PRESETS[args.subset])
+    return values
+
+
+def _pca_gbt_hparams(args: argparse.Namespace, cfg: dict | None = None) -> dict:
+    if cfg is not None and "pca_gbt" in cfg:
+        return {**PCA_GBT_ARG_DEFAULTS, **cfg["pca_gbt"]}
+    values = dict(PCA_GBT_ARG_DEFAULTS)
+    explicit = set(getattr(args, "_explicit_args", set()))
+    for key in PCA_GBT_ARG_DEFAULTS:
+        if key in explicit:
+            values[key] = getattr(args, key)
+    # latent_dim shares the generic --latent-dim flag (argparse default 60).
+    if "latent_dim" in explicit:
+        values["latent_dim"] = int(args.latent_dim)
     return values
 
 
@@ -399,6 +427,20 @@ def _resolved_config(args: argparse.Namespace, *, out_dir: Path, data_dir: Path,
             "hard_stop_step": None if hparams["hard_stop_step"] is None else int(hparams["hard_stop_step"]),
             "linear_trend_cfg": PCA_MLP_LINEAR_TREND_CFG,
             "preset": args.subset if {k: getattr(args, k) for k in PCA_MLP_ARG_DEFAULTS} == PCA_MLP_ARG_DEFAULTS and args.subset in PCA_MLP_PRESETS else None,
+        }
+    elif args.method == "pca_gbt":
+        hparams = _pca_gbt_hparams(args)
+        cfg["pca_gbt"] = {
+            "latent_dim": int(hparams["latent_dim"]),
+            "tree_backend": str(hparams["gbt_tree_backend"]),
+            "learning_rate": float(hparams["gbt_learning_rate"]),
+            "max_iter": int(hparams["gbt_max_iter"]),
+            "max_leaf_nodes": int(hparams["gbt_max_leaf_nodes"]),
+            "min_samples_leaf": int(hparams["gbt_min_samples_leaf"]),
+            "l2_regularization": float(hparams["gbt_l2"]),
+            "early_stopping": True,
+            "ppca_iters": int(args.ppca_iters),
+            "linear_trend_cfg": PCA_GBT_LINEAR_TREND_CFG,
         }
     elif args.method == "pca_ridge":
         hparams = _pca_ridge_hparams(args)

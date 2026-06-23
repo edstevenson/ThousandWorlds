@@ -1,0 +1,29 @@
+{
+  "method": "pca_gbt",
+  "subset": "single-complete",
+  "data_dir": "dataset",
+  "out_dir": "/Users/hamza/Claude/ThousandWorlds/runs/official/single-complete/pca_gbt",
+  "seed": 0,
+  "dtype": "float64",
+  "device": "auto",
+  "pca_gbt": {
+    "latent_dim": 150,
+    "tree_backend": "hgbt",
+    "learning_rate": 0.05,
+    "max_iter": 600,
+    "max_leaf_nodes": 31,
+    "min_samples_leaf": 10,
+    "l2_regularization": 1.0,
+    "early_stopping": true,
+    "ppca_iters": 50,
+    "linear_trend_cfg": {
+      "enabled": true,
+      "lambda": 0.001,
+      "design": {
+        "intercept": true,
+        "inputs": true,
+        "sim_onehot": false
+      }
+    }
+  }
+}
