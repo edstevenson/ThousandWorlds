@@ -44,14 +44,11 @@ class PCAGBT:
         self,
         *,
         latent_dim: int,
-        tree_backend: str = "hgbt",
         learning_rate: float = 0.05,
         max_iter: int = 600,
         max_leaf_nodes: int = 31,
         min_samples_leaf: int = 15,
         l2_regularization: float = 1.0,
-        n_estimators: int = 600,
-        max_features: float = 0.7,
         early_stopping: bool = True,
         validation_fraction: float = 0.1,
         n_iter_no_change: int = 25,
@@ -60,7 +57,6 @@ class PCAGBT:
         device: torch.device | str = "auto",
     ) -> None:
         self.latent_dim = int(latent_dim)
-        self.tree_backend = str(tree_backend)
         # gradient boosting (hgbt)
         self.learning_rate = float(learning_rate)
         self.max_iter = int(max_iter)
@@ -70,9 +66,6 @@ class PCAGBT:
         self.early_stopping = bool(early_stopping)
         self.validation_fraction = float(validation_fraction)
         self.n_iter_no_change = int(n_iter_no_change)
-        # extra-trees / random-forest
-        self.n_estimators = int(n_estimators)
-        self.max_features = max_features
         self.n_jobs = int(n_jobs)
         self.dtype = dtype
         self.device = resolve_torch_device(device)
@@ -81,7 +74,6 @@ class PCAGBT:
         self.linear_trend_: dict | None = None
         self.n_sim_types_: int | None = None
         self._regressors: list | None = None
-        self._multi_regressor = None
         self.field_names_: list[str] | None = None
         self.gbt_fit_stats_: dict | None = None
 
@@ -138,12 +130,7 @@ class PCAGBT:
         Z_target = self.ppca_.Z.detach().cpu().numpy()  # (n, q)
         Xin = self._build_inputs_np(X, s)  # (n, d)
 
-        if self.tree_backend == "hgbt":
-            self._fit_hgbt(Xin, Z_target, seed)
-        elif self.tree_backend in ("extra_trees", "rf"):
-            self._fit_forest(Xin, Z_target, seed)
-        else:
-            raise ValueError(f"Unknown tree_backend={self.tree_backend!r} (expected 'hgbt', 'extra_trees', 'rf').")
+        self._fit_hgbt(Xin, Z_target, seed)
 
     def _fit_hgbt(self, Xin: np.ndarray, Z: np.ndarray, seed: int) -> None:
         from joblib import Parallel, delayed
@@ -167,7 +154,6 @@ class PCAGBT:
         )
         iters_used = [int(getattr(r, "n_iter_", self.max_iter)) for r in regs]
         self._regressors = regs
-        self._multi_regressor = None
         self.gbt_fit_stats_ = {
             "tree_backend": "hgbt",
             "latent_dim": int(Z.shape[1]),
@@ -181,40 +167,15 @@ class PCAGBT:
             "max_n_iter": int(np.max(iters_used)),
         }
 
-    def _fit_forest(self, Xin: np.ndarray, Z: np.ndarray, seed: int) -> None:
-        from sklearn.ensemble import ExtraTreesRegressor, RandomForestRegressor
-
-        cls = ExtraTreesRegressor if self.tree_backend == "extra_trees" else RandomForestRegressor
-        reg = cls(
-            n_estimators=self.n_estimators,
-            max_features=self.max_features,
-            min_samples_leaf=self.min_samples_leaf,
-            n_jobs=-1,
-            random_state=int(seed),
-        )
-        reg.fit(Xin, Z)  # native multi-output
-        self._multi_regressor = reg
-        self._regressors = None
-        self.gbt_fit_stats_ = {
-            "tree_backend": self.tree_backend,
-            "latent_dim": int(Z.shape[1]),
-            "n_estimators": self.n_estimators,
-            "max_features": self.max_features,
-            "min_samples_leaf": self.min_samples_leaf,
-        }
-
     # -------------------------------------------------------------- predict
     @torch.no_grad()
     def predict(self, X: torch.Tensor, s: torch.Tensor) -> torch.Tensor:
-        if self.ppca_ is None or (self._regressors is None and self._multi_regressor is None):
+        if self.ppca_ is None or self._regressors is None:
             raise RuntimeError("Model not fitted.")
         X = X.to(device=self.device, dtype=self.dtype)
         s = s.to(device=self.device, dtype=torch.long)
         Xin = self._build_inputs_np(X, s)
-        if self._multi_regressor is not None:
-            Z_pred = np.asarray(self._multi_regressor.predict(Xin))
-        else:
-            Z_pred = np.stack([reg.predict(Xin) for reg in self._regressors], axis=1)
+        Z_pred = np.stack([reg.predict(Xin) for reg in self._regressors], axis=1)
         Z_pred_t = torch.from_numpy(np.ascontiguousarray(Z_pred)).to(device=self.device, dtype=self.dtype)
         return self._predict_from_latents(Z_pred_t, X=X, s=s)
 

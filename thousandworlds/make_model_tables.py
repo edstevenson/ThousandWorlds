@@ -9,7 +9,7 @@ import pandas as pd
 
 from thousandworlds.models._common import DEFAULT_RESULTS_DIR
 
-PUBLIC_METHODS = {"coord_deeponet", "coord_mlp", "gplfr", "knn", "ppca_icm", "pca_mlp", "pca_ridge", "train_mean"}
+PUBLIC_METHODS = {"coord_deeponet", "coord_mlp", "gplfr", "knn", "pca_gbt", "ppca_icm", "pca_mlp", "pca_ridge", "train_mean"}
 GENERATED_METRICS = ("rmse", "acc", "energy_score", "spread_skill_ratio", "relative_rmse", "relative_acc", "relative_energy_score")
 
 

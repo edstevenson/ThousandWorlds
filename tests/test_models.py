@@ -295,7 +295,6 @@ def test_pca_ridge_fit_predict_smoke():
 def test_pca_gbt_resolver_defaults_and_config_replay():
     args = run_model.argparse.Namespace(
         latent_dim=60,
-        gbt_tree_backend="hgbt",
         gbt_learning_rate=0.05,
         gbt_max_iter=600,
         gbt_max_leaf_nodes=31,
@@ -305,7 +304,8 @@ def test_pca_gbt_resolver_defaults_and_config_replay():
     )
     hparams = run_model._pca_gbt_hparams(args)
     assert hparams["latent_dim"] == 150  # default ignores the generic --latent-dim unless explicit
-    assert hparams["gbt_tree_backend"] == "hgbt"
+    assert hparams["n_folds"] == 3  # CV-sweep default (mirrors pca_ridge)
+    assert hparams["best_gbt_learning_rate"] is None  # no config -> fresh sweep
 
     args._explicit_args = {"latent_dim", "gbt_max_leaf_nodes"}
     args.latent_dim = 60
@@ -314,9 +314,37 @@ def test_pca_gbt_resolver_defaults_and_config_replay():
     assert override["latent_dim"] == 60
     assert override["gbt_max_leaf_nodes"] == 63
 
-    replay = run_model._pca_gbt_hparams(args, {"pca_gbt": {"latent_dim": 8, "gbt_max_leaf_nodes": 15}})
+    # A pure --config replay carries no explicit CLI overrides. config.json stores
+    # the chosen hyperparameters with bare keys (learning_rate, max_leaf_nodes);
+    # replay maps them back onto the gbt_* hparam names.
+    args._explicit_args = set()
+    replay = run_model._pca_gbt_hparams(args, {"pca_gbt": {"latent_dim": 8, "max_leaf_nodes": 15}})
     assert replay["latent_dim"] == 8
     assert replay["gbt_max_leaf_nodes"] == 15
+
+
+def test_pca_gbt_cv_replay_uses_stored_best():
+    cfg = {
+        "pca_gbt": {"latent_dim": 150, "learning_rate": 0.1, "max_leaf_nodes": 63},
+        "CV_sweep": {"n_folds": 3, "learning_rate": [0.03, 0.05, 0.1], "max_leaf_nodes": [15, 31, 63], "scores": [[0.5, 0.5, 0.5]] * 3},
+        "best": {"learning_rate": 0.1, "max_leaf_nodes": 63, "cv_equal_group_normalized_rmse": 0.42},
+    }
+    args = run_model.argparse.Namespace(
+        latent_dim=60,
+        gbt_learning_rate=0.05,
+        gbt_max_iter=600,
+        gbt_max_leaf_nodes=31,
+        gbt_min_samples_leaf=10,
+        gbt_l2=1.0,
+        _explicit_args=set(),
+    )
+    hp = run_model._pca_gbt_hparams(args, cfg)
+    # stored best -> _run_pca_gbt skips the sweep and uses these directly
+    assert hp["best_gbt_learning_rate"] == 0.1
+    assert hp["best_gbt_max_leaf_nodes"] == 63
+    assert hp["gbt_max_leaf_nodes"] == 63  # chosen value baked into the pca_gbt block
+    assert hp["best_cv_equal_group_normalized_rmse"] == 0.42
+    assert hp["cv_sweep_scores"] is not None
 
 
 def test_pca_gbt_fit_predict_smoke():

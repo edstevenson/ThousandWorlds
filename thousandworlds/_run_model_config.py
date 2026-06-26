@@ -25,16 +25,22 @@ PCA_MLP_LINEAR_TREND_CFG = {"enabled": True, "lambda": 1.0e-3, "design": {"inter
 
 PCA_GBT_ARG_DEFAULTS = {
     "latent_dim": 150,
-    "gbt_tree_backend": "hgbt",
     "gbt_learning_rate": 0.05,
     "gbt_max_iter": 600,
     "gbt_max_leaf_nodes": 31,
     "gbt_min_samples_leaf": 10,
     "gbt_l2": 1.0,
 }
-# Off-the-shelf gradient boosting with early stopping: iterations auto-adapt to
-# each subset's size, so a single fixed config is used for every subset (no
-# per-subset, test-tuned presets).
+# HistGradientBoosting on PPCA latent scores. learning_rate / max_leaf_nodes are
+# tuned per subset by a KFold CV sweep (objective: equal_group_normalized_rmse),
+# mirroring pca_ridge: the chosen values, grids, and fold scores are written to
+# config.json (CV_sweep + best) and replayed via --config. The remaining
+# hyperparameters are fixed (early stopping adapts iterations to subset size).
+PCA_GBT_CV_DEFAULTS = {
+    "n_folds": 3,
+    "cv_learning_rate": "0.03,0.05,0.1",
+    "cv_max_leaf_nodes": "15,31,63",
+}
 PCA_GBT_LINEAR_TREND_CFG = {"enabled": True, "lambda": 1.0e-3, "design": {"intercept": True, "inputs": True, "sim_onehot": False}}
 
 PCA_RIDGE_ARG_DEFAULTS = {
@@ -184,17 +190,67 @@ def _pca_mlp_hparams(args: argparse.Namespace, cfg: dict | None = None) -> dict[
     return values
 
 
+_PCA_GBT_CFG_KEYS = {
+    "latent_dim": "latent_dim",
+    "learning_rate": "gbt_learning_rate",
+    "max_iter": "gbt_max_iter",
+    "max_leaf_nodes": "gbt_max_leaf_nodes",
+    "min_samples_leaf": "gbt_min_samples_leaf",
+    "l2_regularization": "gbt_l2",
+}
+
+
 def _pca_gbt_hparams(args: argparse.Namespace, cfg: dict | None = None) -> dict:
-    if cfg is not None and "pca_gbt" in cfg:
-        return {**PCA_GBT_ARG_DEFAULTS, **cfg["pca_gbt"]}
-    values = dict(PCA_GBT_ARG_DEFAULTS)
     explicit = set(getattr(args, "_explicit_args", set()))
+    cfg = cfg or {}
+    method_cfg = cfg.get("pca_gbt") or {}
+    cv_cfg = cfg.get("CV_sweep") or {}
+    best_cfg = cfg.get("best") or {}
+    values = dict(PCA_GBT_ARG_DEFAULTS)
+    values.update(PCA_GBT_CV_DEFAULTS)
+
+    # Model hyperparameters: config block (bare keys) overlay, then explicit CLI flags.
+    for cfg_key, arg_key in _PCA_GBT_CFG_KEYS.items():
+        if cfg_key in method_cfg:
+            values[arg_key] = method_cfg[cfg_key]
     for key in PCA_GBT_ARG_DEFAULTS:
         if key in explicit:
             values[key] = getattr(args, key)
     # latent_dim shares the generic --latent-dim flag (argparse default 60).
     if "latent_dim" in explicit:
         values["latent_dim"] = int(args.latent_dim)
+
+    # CV-sweep grids: config CV_sweep block overlay, then explicit CLI flags.
+    values["n_folds"] = int(cv_cfg.get("n_folds", getattr(args, "n_folds", values["n_folds"])))
+    if "n_folds" in explicit:
+        values["n_folds"] = int(args.n_folds)
+    values["cv_learning_rate"] = _csv(cv_cfg.get("learning_rate", getattr(args, "gbt_cv_learning_rate", values["cv_learning_rate"])))
+    if "gbt_cv_learning_rate" in explicit:
+        values["cv_learning_rate"] = _csv(args.gbt_cv_learning_rate)
+    values["cv_max_leaf_nodes"] = _csv(cv_cfg.get("max_leaf_nodes", getattr(args, "gbt_cv_max_leaf_nodes", values["cv_max_leaf_nodes"])))
+    if "gbt_cv_max_leaf_nodes" in explicit:
+        values["cv_max_leaf_nodes"] = _csv(args.gbt_cv_max_leaf_nodes)
+
+    # Chosen ("best") learning_rate / max_leaf_nodes: pinning a value or grid on
+    # the CLI re-runs the sweep; otherwise replay the stored best (skip the sweep).
+    sweep_override = bool(explicit & {"gbt_learning_rate", "gbt_max_leaf_nodes", "n_folds", "gbt_cv_learning_rate", "gbt_cv_max_leaf_nodes"})
+    hidden_best = getattr(args, "best_gbt_learning_rate", None) is not None and getattr(args, "best_gbt_max_leaf_nodes", None) is not None
+    use_best = bool(best_cfg) and (not sweep_override or hidden_best)
+    if hidden_best:
+        values["best_gbt_learning_rate"] = float(args.best_gbt_learning_rate)
+        values["best_gbt_max_leaf_nodes"] = int(args.best_gbt_max_leaf_nodes)
+        values["best_cv_equal_group_normalized_rmse"] = getattr(args, "best_cv_equal_group_normalized_rmse", None)
+        values["cv_sweep_scores"] = getattr(args, "cv_sweep_scores", None)
+    elif use_best:
+        values["best_gbt_learning_rate"] = float(best_cfg["learning_rate"])
+        values["best_gbt_max_leaf_nodes"] = int(best_cfg["max_leaf_nodes"])
+        values["best_cv_equal_group_normalized_rmse"] = best_cfg.get("cv_equal_group_normalized_rmse")
+        values["cv_sweep_scores"] = cv_cfg.get("scores")
+    else:
+        values["best_gbt_learning_rate"] = None
+        values["best_gbt_max_leaf_nodes"] = None
+        values["best_cv_equal_group_normalized_rmse"] = None
+        values["cv_sweep_scores"] = None
     return values
 
 
@@ -327,7 +383,7 @@ def _merge_config_args(args: argparse.Namespace, parser: argparse.ArgumentParser
                 value = _rooted_path(value, config_root)
             setattr(args, key, value)
     method_cfg = cfg.get(str(args.method)) if args.method is not None else None
-    if isinstance(method_cfg, dict) and args.method not in {"coord_mlp", "coord_deeponet", "pca_ridge"}:
+    if isinstance(method_cfg, dict) and args.method not in {"coord_mlp", "coord_deeponet", "pca_ridge", "pca_gbt"}:
         for key, default in defaults.items():
             if hasattr(args, key) and getattr(args, key) == default and key in method_cfg:
                 setattr(args, key, method_cfg[key])
@@ -362,6 +418,31 @@ def _merge_config_args(args: argparse.Namespace, parser: argparse.ArgumentParser
                 args.best_latent_dim = int(best["latent_dim"])
             if getattr(args, "best_lambda_reg", None) is None and "lambda_reg" in best:
                 args.best_lambda_reg = float(best["lambda_reg"])
+            args.best_cv_equal_group_normalized_rmse = best.get("cv_equal_group_normalized_rmse")
+            args.cv_sweep_scores = cv_sweep.get("scores")
+    if args.method == "pca_gbt":
+        cv_sweep = cfg.get("CV_sweep") or {}
+        explicit = set(getattr(args, "_explicit_args", set()))
+        if isinstance(method_cfg, dict):
+            for cfg_key, arg_key in _PCA_GBT_CFG_KEYS.items():
+                if arg_key not in explicit and cfg_key in method_cfg:
+                    setattr(args, arg_key, method_cfg[cfg_key])
+            if "ppca_iters" not in explicit and "ppca_iters" in method_cfg:
+                args.ppca_iters = int(method_cfg["ppca_iters"])
+        if "n_folds" not in explicit and "n_folds" in cv_sweep:
+            args.n_folds = int(cv_sweep["n_folds"])
+        if "gbt_cv_learning_rate" not in explicit and "learning_rate" in cv_sweep:
+            args.gbt_cv_learning_rate = _csv(cv_sweep["learning_rate"])
+        if "gbt_cv_max_leaf_nodes" not in explicit and "max_leaf_nodes" in cv_sweep:
+            args.gbt_cv_max_leaf_nodes = _csv(cv_sweep["max_leaf_nodes"])
+        best = cfg.get("best") or {}
+        sweep_override = bool(explicit & {"gbt_learning_rate", "gbt_max_leaf_nodes", "n_folds", "gbt_cv_learning_rate", "gbt_cv_max_leaf_nodes"})
+        hidden_best = getattr(args, "best_gbt_learning_rate", None) is not None and getattr(args, "best_gbt_max_leaf_nodes", None) is not None
+        if best and (not sweep_override or hidden_best):
+            if getattr(args, "best_gbt_learning_rate", None) is None and "learning_rate" in best:
+                args.best_gbt_learning_rate = float(best["learning_rate"])
+            if getattr(args, "best_gbt_max_leaf_nodes", None) is None and "max_leaf_nodes" in best:
+                args.best_gbt_max_leaf_nodes = int(best["max_leaf_nodes"])
             args.best_cv_equal_group_normalized_rmse = best.get("cv_equal_group_normalized_rmse")
             args.cv_sweep_scores = cv_sweep.get("scores")
     if args.method == "knn":
@@ -429,18 +510,33 @@ def _resolved_config(args: argparse.Namespace, *, out_dir: Path, data_dir: Path,
             "preset": args.subset if {k: getattr(args, k) for k in PCA_MLP_ARG_DEFAULTS} == PCA_MLP_ARG_DEFAULTS and args.subset in PCA_MLP_PRESETS else None,
         }
     elif args.method == "pca_gbt":
-        hparams = _pca_gbt_hparams(args)
+        hparams = _pca_gbt_hparams(args, getattr(args, "_config", None))
+        cv_scores = (meta or {}).get("cv_sweep_scores", hparams.get("cv_sweep_scores"))
+        cv_metric = (meta or {}).get("cv_equal_group_normalized_rmse", hparams.get("best_cv_equal_group_normalized_rmse"))
+        learning_rate = float((meta or {}).get("best_gbt_learning_rate", hparams.get("best_gbt_learning_rate") or hparams["gbt_learning_rate"]))
+        max_leaf_nodes = int((meta or {}).get("best_gbt_max_leaf_nodes", hparams.get("best_gbt_max_leaf_nodes") or hparams["gbt_max_leaf_nodes"]))
         cfg["pca_gbt"] = {
             "latent_dim": int(hparams["latent_dim"]),
-            "tree_backend": str(hparams["gbt_tree_backend"]),
-            "learning_rate": float(hparams["gbt_learning_rate"]),
+            "learning_rate": learning_rate,
             "max_iter": int(hparams["gbt_max_iter"]),
-            "max_leaf_nodes": int(hparams["gbt_max_leaf_nodes"]),
+            "max_leaf_nodes": max_leaf_nodes,
             "min_samples_leaf": int(hparams["gbt_min_samples_leaf"]),
             "l2_regularization": float(hparams["gbt_l2"]),
             "early_stopping": True,
             "ppca_iters": int(args.ppca_iters),
             "linear_trend_cfg": PCA_GBT_LINEAR_TREND_CFG,
+        }
+        cfg["CV_sweep"] = {
+            "n_folds": int(hparams["n_folds"]),
+            "learning_rate": _parse_float_list(str(hparams["cv_learning_rate"])),
+            "max_leaf_nodes": _parse_int_list(str(hparams["cv_max_leaf_nodes"])),
+            "objective": "equal_group_normalized_rmse",
+            "scores": cv_scores,
+        }
+        cfg["best"] = {
+            "learning_rate": learning_rate,
+            "max_leaf_nodes": max_leaf_nodes,
+            "cv_equal_group_normalized_rmse": cv_metric,
         }
     elif args.method == "pca_ridge":
         hparams = _pca_ridge_hparams(args)

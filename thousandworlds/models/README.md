@@ -36,8 +36,10 @@ inputs to latent scores with **gradient-boosted regression trees** (one
 `HistGradientBoostingRegressor` per latent component, fit in parallel). It is
 motivated by the *regime transitions* in the dataset (temperate / snowball /
 runaway): axis-aligned trees can place splits at the transition thresholds that
-smooth regressors blur. A single off-the-shelf config with early stopping is
-used for every subset (no per-subset tuned presets). See `pca_gbt.py`.
+smooth regressors blur. `learning_rate` and `max_leaf_nodes` are tuned per
+subset by a 3-fold CV sweep (objective `equal_group_normalized_rmse`, the same
+convention as PCA-Ridge / kNN); the chosen values, grids, and fold scores are
+written to `config.json` (`CV_sweep` + `best`). See `pca_gbt.py`.
 
 ## Coord-MLP
 

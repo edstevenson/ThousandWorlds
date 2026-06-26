@@ -2,16 +2,15 @@
   "method": "pca_gbt",
   "subset": "multi-complete",
   "data_dir": "dataset",
-  "out_dir": "/Users/hamza/Claude/ThousandWorlds/runs/official/multi-complete/pca_gbt",
+  "out_dir": "results/models/multi-complete/pca_gbt",
   "seed": 0,
   "dtype": "float64",
   "device": "auto",
   "pca_gbt": {
     "latent_dim": 150,
-    "tree_backend": "hgbt",
-    "learning_rate": 0.05,
+    "learning_rate": 0.1,
     "max_iter": 600,
-    "max_leaf_nodes": 31,
+    "max_leaf_nodes": 63,
     "min_samples_leaf": 10,
     "l2_regularization": 1.0,
     "early_stopping": true,
@@ -25,5 +24,41 @@
         "sim_onehot": false
       }
     }
+  },
+  "CV_sweep": {
+    "n_folds": 5,
+    "learning_rate": [
+      0.03,
+      0.05,
+      0.1
+    ],
+    "max_leaf_nodes": [
+      15,
+      31,
+      63
+    ],
+    "objective": "equal_group_normalized_rmse",
+    "scores": [
+      [
+        0.27882215566933155,
+        0.26042815707623956,
+        0.2473490048199892
+      ],
+      [
+        0.27299552485346795,
+        0.2562110159546137,
+        0.24526960887014865
+      ],
+      [
+        0.2654778860509396,
+        0.25230466276407243,
+        0.24391253478825092
+      ]
+    ]
+  },
+  "best": {
+    "learning_rate": 0.1,
+    "max_leaf_nodes": 63,
+    "cv_equal_group_normalized_rmse": 0.24391253478825092
   }
 }
