@@ -54,3 +54,41 @@ def _torch():
     import torch
 
     return torch
+
+
+# --- Target-eligible, planet-grouped CV folds (paper protocol, app:hyperparameter-tuning).
+# Validation sets contain only target-eligible sims (is_target_gcm & in_target_physical_domain),
+# grouped by planet_id; all other training sims are in every fold's training set.
+# Used for the parametric latent-regression baselines (pca_ridge, pca_gbt) and the learned
+# methods. kNN deliberately keeps plain _kfold_indices: as an instance-based method its k
+# selection is corrupted by the near-duplicate leakage this protocol introduces (a near-twin
+# of a validation planet stays in training), which does not occur at test time.
+def _eval_eligible_mask(meta):
+    return (meta["is_target_gcm"].to_numpy(dtype=bool) & meta["in_target_physical_domain"].to_numpy(dtype=bool)).astype(bool)
+
+
+def build_eval_eligible_folds(meta, k, seed=0):
+    meta = meta.reset_index(drop=True)
+    row_ok = _eval_eligible_mask(meta)
+    groups = [(pid, idx.to_numpy(dtype=np.int64)) for pid, idx in meta.groupby("planet_id", sort=True).groups.items()]
+    eligible = [(pid, idx) for pid, idx in groups if bool(row_ok[idx].all())]
+    if len(eligible) < int(k):
+        raise ValueError(f"Need at least k={k} eval-eligible planet_id groups; found {len(eligible)}.")
+    if seed is not None:
+        eligible = [eligible[i] for i in np.random.default_rng(int(seed)).permutation(len(eligible))]
+    bins = [[] for _ in range(int(k))]
+    sizes = np.zeros(int(k), dtype=np.int64)
+    for _, idx in eligible:
+        j = int(np.argmin(sizes)); bins[j].append(idx); sizes[j] += len(idx)
+    eligible_rows = np.concatenate([idx for _, idx in eligible])
+    ineligible = np.setdiff1d(np.arange(len(meta), dtype=np.int64), eligible_rows)
+    folds = []
+    for parts in bins:
+        val = np.sort(np.concatenate(parts))
+        train_eligible = np.setdiff1d(eligible_rows, val)
+        folds.append((np.sort(np.concatenate([ineligible, train_eligible])), val))
+    return folds
+
+
+def _eligible_kfold_indices(meta, n_folds=5, seed=0):
+    return build_eval_eligible_folds(meta, n_folds, seed)
