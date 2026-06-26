@@ -5,12 +5,12 @@
   "out_dir": "results/models/multi-complete/pca_gbt",
   "seed": 0,
   "dtype": "float64",
-  "device": "auto",
+  "device": "cpu",
   "pca_gbt": {
     "latent_dim": 150,
     "learning_rate": 0.1,
     "max_iter": 600,
-    "max_leaf_nodes": 63,
+    "max_leaf_nodes": 31,
     "min_samples_leaf": 10,
     "l2_regularization": 1.0,
     "early_stopping": true,
@@ -40,25 +40,25 @@
     "objective": "equal_group_normalized_rmse",
     "scores": [
       [
-        0.27882215566933155,
-        0.26042815707623956,
-        0.2473490048199892
+        0.3358058713376522,
+        0.3290450170636177,
+        0.3324201714247465
       ],
       [
-        0.27299552485346795,
-        0.2562110159546137,
-        0.24526960887014865
+        0.3353898975998163,
+        0.328131964430213,
+        0.32995596565306184
       ],
       [
-        0.2654778860509396,
-        0.25230466276407243,
-        0.24391253478825092
+        0.33342172726988795,
+        0.32588449865579605,
+        0.33000342510640623
       ]
     ]
   },
   "best": {
     "learning_rate": 0.1,
-    "max_leaf_nodes": 63,
-    "cv_equal_group_normalized_rmse": 0.24391253478825092
+    "max_leaf_nodes": 31,
+    "cv_equal_group_normalized_rmse": 0.32588449865579605
   }
 }

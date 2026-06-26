@@ -47,6 +47,7 @@ from ._run_model_config import (
 from ._run_model_utils import (
     _append_gcm_block,
     _kfold_indices,
+    _eligible_kfold_indices,
     _mark_explicit_args,
     _parse_float_list,
     _parse_int_list,
@@ -289,7 +290,7 @@ def _run_pca_ridge(args: argparse.Namespace) -> dict:
                 val_idx,
                 field_rmse_scale_grid(Y_train_avg[train_idx], data.grid_bundle.field_mask_train[train_idx]),
             )
-            for train_idx, val_idx in _kfold_indices(len(data.X_train_std), n_folds=int(hparams["n_folds"]), seed=args.seed)
+            for train_idx, val_idx in _eligible_kfold_indices(data.grid_bundle.meta_train, n_folds=int(hparams["n_folds"]), seed=args.seed)
         ]
         for i, latent_dim in enumerate(latent_grid):
             fold_models = []
@@ -469,7 +470,7 @@ def _run_pca_gbt(args: argparse.Namespace) -> dict:
         best = {"learning_rate": None, "max_leaf_nodes": None, "metric": float("inf")}
         scores = np.full((len(lr_grid), len(mln_grid)), np.inf, dtype=np.float64)
         folds = []
-        for train_idx, val_idx in _kfold_indices(len(data.X_train_std), n_folds=int(hp["n_folds"]), seed=args.seed):
+        for train_idx, val_idx in _eligible_kfold_indices(data.grid_bundle.meta_train, n_folds=int(hp["n_folds"]), seed=args.seed):
             model = _fit_full(_make_model(lr_grid[0], mln_grid[0]), train_idx)
             Xin = model._build_inputs_np(
                 torch.as_tensor(data.X_train_std[train_idx], device=model.device, dtype=model.dtype),
