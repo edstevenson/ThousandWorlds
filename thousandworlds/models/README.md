@@ -29,6 +29,18 @@ latent scores with ridge regression. See `pca_ridge.py` and `_ppca.py`.
 `pca_mlp` uses the same PPCA representation as PCA-Ridge, but maps inputs to
 latent scores with a two-hidden-layer MLP. See `pca_mlp.py`.
 
+## PCA-GBT
+
+`pca_gbt` uses the same PPCA representation as PCA-Ridge and PCA-MLP, but maps
+inputs to latent scores with **gradient-boosted regression trees** (one
+`HistGradientBoostingRegressor` per latent component, fit in parallel). It is
+motivated by the *regime transitions* in the dataset (temperate / snowball /
+runaway): axis-aligned trees can place splits at the transition thresholds that
+smooth regressors blur. `learning_rate` and `max_leaf_nodes` are tuned per
+subset by a 3-fold CV sweep (objective `equal_group_normalized_rmse`, the same
+convention as PCA-Ridge / kNN); the chosen values, grids, and fold scores are
+written to `config.json` (`CV_sweep` + `best`). See `pca_gbt.py`.
+
 ## Coord-MLP
 
 `coord_mlp` predicts one grid value at a time from planet inputs, GCM identity,

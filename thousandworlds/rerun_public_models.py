@@ -9,7 +9,7 @@ import sys
 from thousandworlds.run_model import COORD_DEEPONET_PRESETS, COORD_MLP_PRESETS
 
 SUBSETS = ["multi-partial", "multi-complete", "single-complete"]
-METHODS = ("train_mean", "knn", "pca_ridge", "pca_mlp", "ppca_icm", "gplfr", "coord_mlp", "coord_deeponet")
+METHODS = ("train_mean", "knn", "pca_ridge", "pca_mlp", "pca_gbt", "ppca_icm", "gplfr", "coord_mlp", "coord_deeponet")
 
 
 def main() -> None:

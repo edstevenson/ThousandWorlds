@@ -28,6 +28,7 @@ from ._run_model_config import (
     COORD_DEEPONET_PRESETS,
     COORD_MLP_ARG_DEFAULTS,
     COORD_MLP_PRESETS,
+    PCA_GBT_LINEAR_TREND_CFG,
     PCA_MLP_ARG_DEFAULTS,
     PCA_MLP_LINEAR_TREND_CFG,
     PCA_RIDGE_DESIGN_CFG,
@@ -37,6 +38,7 @@ from ._run_model_config import (
     _coord_mlp_hparams,
     _gplfr_hparams,
     _merge_config_args,
+    _pca_gbt_hparams,
     _pca_mlp_hparams,
     _pca_ridge_hparams,
     _ppca_icm_hparams,
@@ -81,6 +83,15 @@ def run(
         best_lambda_reg=None,
         hidden_width=128,
         activation="silu",
+        gbt_learning_rate=0.05,
+        gbt_max_iter=600,
+        gbt_max_leaf_nodes=31,
+        gbt_min_samples_leaf=10,
+        gbt_l2=1.0,
+        gbt_cv_learning_rate="0.03,0.05,0.1",
+        gbt_cv_max_leaf_nodes="15,31,63",
+        best_gbt_learning_rate=None,
+        best_gbt_max_leaf_nodes=None,
         ppca_iters=50,
         num_steps=3000,
         lr=1.0e-3,
@@ -401,6 +412,117 @@ def _run_pca_mlp(args: argparse.Namespace) -> dict:
     return {"data": data, "predictions": predictions, "meta": {"method": "pca_mlp", "mlp_fit": model.mlp_fit_stats_}}
 
 
+def _run_pca_gbt(args: argparse.Namespace) -> dict:
+    from thousandworlds.models.pca_gbt import PCAGBT
+
+    torch = _torch()
+    data = prepare_tw_data(args.subset, data_dir=args.data_dir)
+    hp = _pca_gbt_hparams(args, getattr(args, "_config", None))
+    Y_train = np.transpose(tw.normalise_spectral(data.spectral_bundle.Y_train, data.spectral_bundle.raw_field_names, data.stats), (0, 2, 1))
+    Y_train_avg = average_space_grid(data.grid_bundle.Y_train, data.grid_bundle.raw_field_names, data.stats, X=data.grid_bundle.X_train)
+    lr_grid = _parse_float_list(str(hp["cv_learning_rate"]))
+    mln_grid = _parse_int_list(str(hp["cv_max_leaf_nodes"]))
+
+    explicit = set(getattr(args, "_explicit_args", set()))
+    pinned = bool(explicit & {"gbt_learning_rate", "gbt_max_leaf_nodes"})
+    have_best = hp.get("best_gbt_learning_rate") is not None and hp.get("best_gbt_max_leaf_nodes") is not None
+
+    def _make_model(learning_rate: float, max_leaf_nodes: int) -> PCAGBT:
+        return PCAGBT(
+            latent_dim=int(hp["latent_dim"]),
+            learning_rate=float(learning_rate),
+            max_iter=int(hp["gbt_max_iter"]),
+            max_leaf_nodes=int(max_leaf_nodes),
+            min_samples_leaf=int(hp["gbt_min_samples_leaf"]),
+            l2_regularization=float(hp["gbt_l2"]),
+            early_stopping=True,
+            dtype=getattr(torch, args.dtype),
+            device=args.device,
+        )
+
+    def _fit_full(model: PCAGBT, idx) -> PCAGBT:
+        model.fit(
+            torch.from_numpy(data.X_train_std[idx]),
+            torch.from_numpy(data.s_train[idx].copy()),
+            torch.from_numpy(Y_train[idx]),
+            field_mask=torch.from_numpy(data.spectral_bundle.field_mask_train[idx]),
+            sh_mask=torch.from_numpy(data.sh_mask),
+            linear_trend_cfg=PCA_GBT_LINEAR_TREND_CFG,
+            field_names=data.spectral_bundle.raw_field_names,
+            ppca_iters=int(args.ppca_iters),
+            seed=args.seed,
+            n_sim_types=len(data.gcm_labels),
+        )
+        return model
+
+    if have_best:
+        best = {"learning_rate": float(hp["best_gbt_learning_rate"]), "max_leaf_nodes": int(hp["best_gbt_max_leaf_nodes"]), "metric": hp.get("best_cv_equal_group_normalized_rmse")}
+        scores = hp.get("cv_sweep_scores")
+    elif pinned:
+        best = {"learning_rate": float(hp["gbt_learning_rate"]), "max_leaf_nodes": int(hp["gbt_max_leaf_nodes"]), "metric": None}
+        scores = None
+    else:
+        # CV sweep over (learning_rate, max_leaf_nodes). PPCA + the shared linear
+        # trend depend only on latent_dim (not swept), so fit them once per fold
+        # and refit just the gradient-boosted trees for each grid point -- the
+        # same fold-caching trick pca_ridge uses for its (latent_dim, lambda) grid.
+        best = {"learning_rate": None, "max_leaf_nodes": None, "metric": float("inf")}
+        scores = np.full((len(lr_grid), len(mln_grid)), np.inf, dtype=np.float64)
+        folds = []
+        for train_idx, val_idx in _kfold_indices(len(data.X_train_std), n_folds=int(hp["n_folds"]), seed=args.seed):
+            model = _fit_full(_make_model(lr_grid[0], mln_grid[0]), train_idx)
+            Xin = model._build_inputs_np(
+                torch.as_tensor(data.X_train_std[train_idx], device=model.device, dtype=model.dtype),
+                torch.as_tensor(data.s_train[train_idx], device=model.device, dtype=torch.long),
+            )
+            Z_target = model.ppca_.Z.detach().cpu().numpy()
+            field_scale = field_rmse_scale_grid(Y_train_avg[train_idx], data.grid_bundle.field_mask_train[train_idx])
+            folds.append((model, Xin, Z_target, val_idx, field_scale))
+        for i, learning_rate in enumerate(lr_grid):
+            for j, max_leaf_nodes in enumerate(mln_grid):
+                fold_losses = []
+                for model, Xin, Z_target, val_idx, field_scale in folds:
+                    model.learning_rate = float(learning_rate)
+                    model.max_leaf_nodes = int(max_leaf_nodes)
+                    model._fit_hgbt(Xin, Z_target, int(args.seed))
+                    pred_coeffs = model.predict(
+                        torch.from_numpy(data.X_train_std[val_idx]),
+                        torch.from_numpy(data.s_train[val_idx].copy()),
+                    ).detach().cpu().numpy().transpose(0, 2, 1)
+                    pred_avg = decode_spectral_predictions(pred_coeffs, data.spectral_bundle.raw_field_names, data.stats, sh_mask=data.sh_mask, inverse_sht=data.inverse_sht)
+                    fold_losses.append(
+                        equal_group_normalized_rmse_grid(
+                            pred_avg,
+                            Y_train_avg[val_idx],
+                            data.grid_bundle.raw_field_names,
+                            field_scale,
+                            data.grid_bundle.field_mask_train[val_idx],
+                        )
+                    )
+                mean_loss = float(np.mean(fold_losses))
+                scores[i, j] = float("inf") if not np.isfinite(mean_loss) else mean_loss
+                if scores[i, j] < best["metric"]:
+                    best = {"learning_rate": float(learning_rate), "max_leaf_nodes": int(max_leaf_nodes), "metric": float(scores[i, j])}
+        scores = scores.tolist()
+
+    model = _fit_full(_make_model(best["learning_rate"], best["max_leaf_nodes"]), slice(None))
+    pred_coeffs = model.predict(torch.from_numpy(data.X_test_std), torch.from_numpy(data.s_test.copy())).detach().cpu().numpy().transpose(0, 2, 1)
+    pred_avg = decode_spectral_predictions(pred_coeffs, data.spectral_bundle.raw_field_names, data.stats, sh_mask=data.sh_mask, inverse_sht=data.inverse_sht)
+    predictions = inverse_average_space_grid(pred_avg, data.spectral_bundle.raw_field_names, data.stats, X=data.grid_bundle.X_test)[None]
+    return {
+        "data": data,
+        "predictions": predictions,
+        "meta": {
+            "method": "pca_gbt",
+            "best_gbt_learning_rate": float(best["learning_rate"]),
+            "best_gbt_max_leaf_nodes": int(best["max_leaf_nodes"]),
+            "cv_equal_group_normalized_rmse": None if best["metric"] is None else float(best["metric"]),
+            "cv_sweep_scores": scores,
+            "gbt_fit": model.gbt_fit_stats_,
+        },
+    }
+
+
 def _run_coord_mlp(args: argparse.Namespace) -> dict:
     from thousandworlds.models.coord_mlp import CoordMLP
 
@@ -611,6 +733,7 @@ def _run_method(args: argparse.Namespace) -> dict:
         "knn": _run_knn,
         "pca_ridge": _run_pca_ridge,
         "pca_mlp": _run_pca_mlp,
+        "pca_gbt": _run_pca_gbt,
         "coord_mlp": _run_coord_mlp,
         "coord_deeponet": _run_coord_deeponet,
         "ppca_icm": _run_ppca_icm,
@@ -620,7 +743,7 @@ def _run_method(args: argparse.Namespace) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="python -m thousandworlds.run_model", description="Run extracted ThousandWorlds models.")
-    parser.add_argument("method", nargs="?", choices=["train_mean", "knn", "pca_ridge", "pca_mlp", "ppca_icm", "gplfr", "coord_mlp", "coord_deeponet"])
+    parser.add_argument("method", nargs="?", choices=["train_mean", "knn", "pca_ridge", "pca_mlp", "pca_gbt", "ppca_icm", "gplfr", "coord_mlp", "coord_deeponet"])
     parser.add_argument("subset", nargs="?")
     # ---- Shared / general arguments ----
     parser.add_argument("--config", type=Path, default=None, help="Resolved config.json written by a previous run")
@@ -651,6 +774,17 @@ def main() -> None:
     parser.add_argument("--lr", type=float, default=1.0e-3, help="PCA-MLP: Learning rate")
     parser.add_argument("--weight-decay", type=float, default=1.0e-3, help="PCA-MLP: Weight decay for MLP")
     parser.add_argument("--hard-stop-step", type=int, default=None, help="PCA-MLP: Optional hard stop step")
+
+    # ---- PCA-GBT arguments ----
+    parser.add_argument("--gbt-learning-rate", type=float, default=0.05, help="PCA-GBT: gradient-boosting learning rate (pins value, skips CV sweep)")
+    parser.add_argument("--gbt-max-iter", type=int, default=600, help="PCA-GBT: max boosting iterations (early stopping caps actual)")
+    parser.add_argument("--gbt-max-leaf-nodes", type=int, default=31, help="PCA-GBT: max leaves per tree (pins value, skips CV sweep)")
+    parser.add_argument("--gbt-min-samples-leaf", type=int, default=10, help="PCA-GBT: min samples per leaf")
+    parser.add_argument("--gbt-l2", type=float, default=1.0, help="PCA-GBT: L2 regularization")
+    parser.add_argument("--gbt-cv-learning-rate", default="0.03,0.05,0.1", help="PCA-GBT: CV learning-rate grid (per-subset tuning)")
+    parser.add_argument("--gbt-cv-max-leaf-nodes", default="15,31,63", help="PCA-GBT: CV max-leaf-nodes grid (per-subset tuning)")
+    parser.add_argument("--best-gbt-learning-rate", type=float, default=None, help=argparse.SUPPRESS)
+    parser.add_argument("--best-gbt-max-leaf-nodes", type=int, default=None, help=argparse.SUPPRESS)
 
     # ---- Coord-MLP arguments ----
     parser.add_argument("--coord-hidden-width", type=int, default=256, help="Coord-MLP: Hidden width")

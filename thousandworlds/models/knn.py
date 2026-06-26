@@ -134,4 +134,3 @@ class KNN:
         Y_neighbors = self._Y_train[idx]
         neighbor_mask = self._field_mask[idx] if self._field_mask is not None else None
         return _predict_from_neighbors(Y_neighbors, neighbor_mask)
-

@@ -1,0 +1,64 @@
+{
+  "method": "pca_gbt",
+  "subset": "multi-partial",
+  "data_dir": "dataset",
+  "out_dir": "results/models/multi-partial/pca_gbt",
+  "seed": 0,
+  "dtype": "float64",
+  "device": "auto",
+  "pca_gbt": {
+    "latent_dim": 150,
+    "learning_rate": 0.1,
+    "max_iter": 600,
+    "max_leaf_nodes": 63,
+    "min_samples_leaf": 10,
+    "l2_regularization": 1.0,
+    "early_stopping": true,
+    "ppca_iters": 50,
+    "linear_trend_cfg": {
+      "enabled": true,
+      "lambda": 0.001,
+      "design": {
+        "intercept": true,
+        "inputs": true,
+        "sim_onehot": false
+      }
+    }
+  },
+  "CV_sweep": {
+    "n_folds": 5,
+    "learning_rate": [
+      0.03,
+      0.05,
+      0.1
+    ],
+    "max_leaf_nodes": [
+      15,
+      31,
+      63
+    ],
+    "objective": "equal_group_normalized_rmse",
+    "scores": [
+      [
+        0.28557552173733713,
+        0.2666988272219896,
+        0.25601491890847683
+      ],
+      [
+        0.2799316257238388,
+        0.2634515054523945,
+        0.25429164804518223
+      ],
+      [
+        0.27287936583161354,
+        0.26003507561981676,
+        0.25280670560896396
+      ]
+    ]
+  },
+  "best": {
+    "learning_rate": 0.1,
+    "max_leaf_nodes": 63,
+    "cv_equal_group_normalized_rmse": 0.25280670560896396
+  }
+}

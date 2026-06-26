@@ -1,6 +1,6 @@
 from importlib import import_module
 
-__all__ = ["CoordDeepONet", "CoordMLP", "GPLFR", "KNN", "PPCAICM", "PCAMLP", "PCARidge", "TrainMean"]
+__all__ = ["CoordDeepONet", "CoordMLP", "GPLFR", "KNN", "PPCAICM", "PCAGBT", "PCAMLP", "PCARidge", "TrainMean"]
 
 _EXPORTS = {
     "CoordDeepONet": (".coord_deeponet", "CoordDeepONet"),
@@ -8,6 +8,7 @@ _EXPORTS = {
     "GPLFR": (".gplfr", "GPLFR"),
     "KNN": (".knn", "KNN"),
     "PPCAICM": (".ppca_icm", "PPCAICM"),
+    "PCAGBT": (".pca_gbt", "PCAGBT"),
     "PCAMLP": (".pca_mlp", "PCAMLP"),
     "PCARidge": (".pca_ridge", "PCARidge"),
     "TrainMean": (".train_mean", "TrainMean"),

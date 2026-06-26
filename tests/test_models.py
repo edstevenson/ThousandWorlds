@@ -29,6 +29,7 @@ def test_models_surface_smoke_and_knn_path():
     assert models.PPCAICM is not None
     assert models.PCAMLP is not None
     assert models.PCARidge is not None
+    assert models.PCAGBT is not None
     assert models.CoordDeepONet is not None
     assert models.CoordMLP is not None
 
@@ -116,7 +117,7 @@ def test_run_model_help_lists_supported_methods():
         text=True,
         check=True,
     )
-    assert "{train_mean,knn,pca_ridge,pca_mlp,ppca_icm,gplfr,coord_mlp,coord_deeponet}" in result.stdout
+    assert "{train_mean,knn,pca_ridge,pca_mlp,pca_gbt,ppca_icm,gplfr,coord_mlp,coord_deeponet}" in result.stdout
     assert "1,2,3,5,10" in result.stdout
     assert "0.0,0.3,1.0,3.0,10.0" in result.stdout
     assert "--lambda-reg" in result.stdout
@@ -288,6 +289,78 @@ def test_pca_ridge_fit_predict_smoke():
     model.fit(X, s, Y, field_mask=field_mask, sh_mask=sh_mask, ppca_iters=2, seed=0, n_sim_types=2)
     pred = model.predict(X[:2], s[:2])
     assert pred.shape == (2, 3, 2)
+    assert torch.isfinite(pred).all()
+
+
+def test_pca_gbt_resolver_defaults_and_config_replay():
+    args = run_model.argparse.Namespace(
+        latent_dim=60,
+        gbt_learning_rate=0.05,
+        gbt_max_iter=600,
+        gbt_max_leaf_nodes=31,
+        gbt_min_samples_leaf=10,
+        gbt_l2=1.0,
+        _explicit_args=set(),
+    )
+    hparams = run_model._pca_gbt_hparams(args)
+    assert hparams["latent_dim"] == 150  # default ignores the generic --latent-dim unless explicit
+    assert hparams["n_folds"] == 3  # CV-sweep default (mirrors pca_ridge)
+    assert hparams["best_gbt_learning_rate"] is None  # no config -> fresh sweep
+
+    args._explicit_args = {"latent_dim", "gbt_max_leaf_nodes"}
+    args.latent_dim = 60
+    args.gbt_max_leaf_nodes = 63
+    override = run_model._pca_gbt_hparams(args)
+    assert override["latent_dim"] == 60
+    assert override["gbt_max_leaf_nodes"] == 63
+
+    # A pure --config replay carries no explicit CLI overrides. config.json stores
+    # the chosen hyperparameters with bare keys (learning_rate, max_leaf_nodes);
+    # replay maps them back onto the gbt_* hparam names.
+    args._explicit_args = set()
+    replay = run_model._pca_gbt_hparams(args, {"pca_gbt": {"latent_dim": 8, "max_leaf_nodes": 15}})
+    assert replay["latent_dim"] == 8
+    assert replay["gbt_max_leaf_nodes"] == 15
+
+
+def test_pca_gbt_cv_replay_uses_stored_best():
+    cfg = {
+        "pca_gbt": {"latent_dim": 150, "learning_rate": 0.1, "max_leaf_nodes": 63},
+        "CV_sweep": {"n_folds": 3, "learning_rate": [0.03, 0.05, 0.1], "max_leaf_nodes": [15, 31, 63], "scores": [[0.5, 0.5, 0.5]] * 3},
+        "best": {"learning_rate": 0.1, "max_leaf_nodes": 63, "cv_equal_group_normalized_rmse": 0.42},
+    }
+    args = run_model.argparse.Namespace(
+        latent_dim=60,
+        gbt_learning_rate=0.05,
+        gbt_max_iter=600,
+        gbt_max_leaf_nodes=31,
+        gbt_min_samples_leaf=10,
+        gbt_l2=1.0,
+        _explicit_args=set(),
+    )
+    hp = run_model._pca_gbt_hparams(args, cfg)
+    # stored best -> _run_pca_gbt skips the sweep and uses these directly
+    assert hp["best_gbt_learning_rate"] == 0.1
+    assert hp["best_gbt_max_leaf_nodes"] == 63
+    assert hp["gbt_max_leaf_nodes"] == 63  # chosen value baked into the pca_gbt block
+    assert hp["best_cv_equal_group_normalized_rmse"] == 0.42
+    assert hp["cv_sweep_scores"] is not None
+
+
+def test_pca_gbt_fit_predict_smoke():
+    from thousandworlds.models.pca_gbt import PCAGBT
+
+    rng = np.random.default_rng(0)
+    n = 60
+    model = PCAGBT(latent_dim=2, max_iter=30, early_stopping=False, n_jobs=1, dtype=torch.float64, device="cpu")
+    X = torch.tensor(rng.normal(size=(n, 2)), dtype=torch.float64)
+    s = torch.tensor(([0, 1] * n)[:n], dtype=torch.long)
+    Y = torch.tensor(rng.normal(size=(n, 3, 2)), dtype=torch.float64)
+    field_mask = torch.ones((n, 2), dtype=torch.bool)
+    sh_mask = torch.ones((3, 2), dtype=torch.bool)
+    model.fit(X, s, Y, field_mask=field_mask, sh_mask=sh_mask, ppca_iters=2, seed=0, n_sim_types=2)
+    pred = model.predict(X[:5], s[:5])
+    assert pred.shape == (5, 3, 2)
     assert torch.isfinite(pred).all()
 
 

@@ -84,7 +84,7 @@ trains a baseline in-notebook and compares its predictions to the targets.
 
 ```
 thousandworlds/
-  data.py               # download + load 
+  data.py               # download + load
   preprocessing.py      # input/output transforms, normalization
   spectral.py           # spectral coefficients <-> gridded fields
   evaluate.py           # RMSE, ACC, energy score, spread-skill ratio, etc.
@@ -113,4 +113,3 @@ If you use ThousandWorlds, please cite the paper:
   doi = {10.48550/arXiv.2606.18338}
 }
 ```
-
