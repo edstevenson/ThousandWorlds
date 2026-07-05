@@ -13,6 +13,9 @@ The search for life beyond Earth depends on the molecular signatures it leaves b
 
 ![ThousandWorlds dataset schematic](imgs/OVERVIEW.png)
 
+Explore the dataset + discovered exoplanets online with the [ThousandWorlds Explorer](https://thousandworldsexplorer.com)!
+Built by [Hamza Ali Shahjahan](https://github.com/hamza-ali-shahjahan)!
+
 ## Quickstart
 
 ```bash
